@@ -1,12 +1,11 @@
 // client/src/components/RazorpayButton.jsx
 import React from 'react';
-import axios from 'axios';
+import api from '../lib/api';
 
-const RazorpayButton = ({ amount, orderId }) => {
+const RazorpayButton = ({ amount, orderId, onSuccess }) => {
   const handlePayment = async () => {
     try {
-      // 1. Create a Razorpay order on the back end
-      const { data } = await axios.post('/api/payment/create-order', { amount, orderId });
+      const { data } = await api.post('/api/payment/create-order', { amount, orderId });
       const razorpayOrder = data;
 
       const options = {
@@ -17,25 +16,17 @@ const RazorpayButton = ({ amount, orderId }) => {
         description: `Rental order #${orderId}`,
         order_id: razorpayOrder.id,
         handler: async (response) => {
-          // 2. On successful payment, verify the signature on the back end
-          await axios.post('/api/payment/verify', {
+          await api.post('/api/payment/verify', {
             razorpay_order_id: response.razorpay_order_id,
             razorpay_payment_id: response.razorpay_payment_id,
             razorpay_signature: response.razorpay_signature,
             orderId,
             amount,
           });
-          alert('Payment successful!');
-          window.location.reload(); // Or redirect to a success page
+          if (onSuccess) onSuccess();
+          else window.location.reload();
         },
-        prefill: {
-          name: 'Customer Name',
-          email: 'customer@example.com',
-          contact: '9999999999',
-        },
-        theme: {
-          color: '#3399cc',
-        },
+        theme: { color: '#3399cc' },
       };
 
       const rzp = new window.Razorpay(options);
@@ -47,8 +38,8 @@ const RazorpayButton = ({ amount, orderId }) => {
   };
 
   return (
-    <button onClick={handlePayment}>
-      Pay with Razorpay
+    <button onClick={handlePayment} className="px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700">
+      Pay ₹{amount}
     </button>
   );
 };

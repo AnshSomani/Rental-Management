@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { quotePrice } = require('../controllers/pricingController');
-const { protect } = require('../middleware/authMiddleware');
 
-router.post('/quote', protect, quotePrice);
+router.post('/quote', quotePrice);
 
 module.exports = router;
