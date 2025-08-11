@@ -12,38 +12,55 @@ const ProductDetailPage = () => {
   const [dates, setDates] = useState({ start: null, end: null });
   const [totalPrice, setTotalPrice] = useState(0);
   const [orderId, setOrderId] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
-    // Fetch product details
     const fetchProduct = async () => {
-      const { data } = await axios.get(`/api/products/${productId}`);
-      setProduct(data);
+      try {
+        const { data } = await axios.get(`/api/products/${productId}`);
+        setProduct(data);
+      } catch (error) {
+        console.error('Error fetching product details:', error);
+        setIsError(true);
+      } finally {
+        setIsLoading(false);
+      }
     };
     fetchProduct();
   }, [productId]);
 
-  // Handle date selection from the calendar and calculate price
   const handleDateSelect = (startDate, endDate) => {
     setDates({ start: startDate, end: endDate });
     // TODO: Implement pricing logic here
-    // For now, a placeholder
     const calculatedPrice = 1000;
     setTotalPrice(calculatedPrice);
   };
   
   const handleCreateOrder = async () => {
-    // API call to create a rental quotation/order on the back end
-    const { data } = await axios.post('/api/orders', {
-      productId,
-      startDate: dates.start,
-      endDate: dates.end,
-      totalPrice,
-    });
-    setOrderId(data.orderId);
+    try {
+      const { data } = await axios.post('/api/orders', {
+        productId,
+        startDate: dates.start,
+        endDate: dates.end,
+        totalPrice,
+      });
+      setOrderId(data.orderId);
+    } catch (error) {
+      console.error('Error creating order:', error);
+      alert('Failed to create order. Please try again.');
+    }
   };
 
-  if (!product) return <div>Loading...</div>;
+  if (isLoading) {
+    return <div>Loading product details...</div>;
+  }
+  
+  if (isError) {
+      return <div>Failed to load product. Please check the URL or try again later.</div>;
+  }
 
+  // The code now assumes 'product' is not null or undefined here
   return (
     <div>
       <h1>{product.name}</h1>
@@ -60,9 +77,9 @@ const ProductDetailPage = () => {
             Proceed to Payment
           </button>
 
-          {/* {orderId && (
+          {orderId && (
             <RazorpayButton amount={totalPrice} orderId={orderId} />
-          )} */}
+          )}
         </>
       )}
     </div>

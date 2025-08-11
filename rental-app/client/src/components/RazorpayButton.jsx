@@ -10,7 +10,7 @@ const RazorpayButton = ({ amount, orderId }) => {
       const razorpayOrder = data;
 
       const options = {
-        key: 'YOUR_RAZORPAY_KEY_ID', // Replace with your test key
+        key: 'Yrzp_test_RU4KofSwIRBZqQ', // Replace with your test key
         amount: razorpayOrder.amount,
         currency: razorpayOrder.currency,
         name: 'Rental App',
