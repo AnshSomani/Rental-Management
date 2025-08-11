@@ -1,4 +1,3 @@
-// server/models/RentalOrder.js
 const mongoose = require('mongoose');
 
 const rentalOrderSchema = new mongoose.Schema({

@@ -1,4 +1,3 @@
-// server/models/Product.js
 const mongoose = require('mongoose');
 
 const pricingSchema = new mongoose.Schema({

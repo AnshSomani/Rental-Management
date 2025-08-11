@@ -1,4 +1,3 @@
-// server/models/User.js
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
@@ -18,12 +17,11 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['customer', 'admin'],
+    enum: ['customer', 'admin','end_user'],
     default: 'customer',
   },
 }, { timestamps: true });
 
-// Hash password before saving
 userSchema.pre('save', async function(next) {
   if (!this.isModified('password')) {
     return next();
@@ -33,7 +31,6 @@ userSchema.pre('save', async function(next) {
   next();
 });
 
-// Method to compare passwords
 userSchema.methods.matchPassword = async function(enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };

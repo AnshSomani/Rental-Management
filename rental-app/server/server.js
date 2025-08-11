@@ -5,13 +5,11 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
 
-const app = express(); // <--- Add this line back in
+const app = express();
 
-// Middlewares
 app.use(express.json());
 app.use(cors());
 app.use('/api/auth', require('./routes/authRoutes'));
-// ... (the rest of your code)
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

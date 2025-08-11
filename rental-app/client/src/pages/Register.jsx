@@ -5,7 +5,6 @@ import {
   FiUser,
   FiMail,
   FiLock,
-  FiArrowLeft,
   FiArrowRight,
   FiShield,
 } from 'react-icons/fi';
@@ -25,15 +24,13 @@ export default function Register() {
     setIsLoading(true);
 
     try {
-      const { data } = await axios.post('/api/auth/register', formData);
-      localStorage.setItem('userInfo', JSON.stringify(data));
-      setTimeout(() => {
-        navigate('/rental-shop');
-        window.location.reload();
-      }, 800);
+      await axios.post('/api/auth/register', formData);
+      
+      // Navigate to login page on success
+      navigate('/login'); 
+      
     } catch (error) {
-      const msg =
-        error.response?.data?.message || 'Registration failed. Please try again.';
+      const msg = error.response?.data?.message || 'Registration failed. Please try again.';
       setErrorMessage(msg);
       setIsLoading(false);
     }
@@ -45,9 +42,9 @@ export default function Register() {
         <div
           className="absolute inset-0"
           style={{
-  backgroundImage: `radial-gradient(circle at 25% 25%, #4338ca 0%, transparent 50%), 
-                    radial-gradient(circle at 75% 75%, #7c3aed 0%, transparent 50%)`
-}}
+            backgroundImage: `radial-gradient(circle at 25% 25%, #4338ca 0%, transparent 50%), 
+                           radial-gradient(circle at 75% 75%, #7c3aed 0%, transparent 50%)`
+          }}
         />
       </div>
 
@@ -156,6 +153,6 @@ export default function Register() {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>
+  );
 }

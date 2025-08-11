@@ -1,10 +1,5 @@
-// server/controllers/orderController.js
-
 const RentalOrder = require('../models/RentalOrder');
 
-// @desc    Create a new rental order
-// @route   POST /api/orders
-// @access  Private
 const createOrder = async (req, res) => {
   const { productId, startDate, endDate, totalPrice } = req.body;
   try {
@@ -25,9 +20,6 @@ const createOrder = async (req, res) => {
   }
 };
 
-// @desc    Fetch all orders for the authenticated user
-// @route   GET /api/orders/myorders
-// @access  Private
 const getMyOrders = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -38,9 +30,6 @@ const getMyOrders = async (req, res) => {
   }
 };
 
-// @desc    Update order status (for admin)
-// @route   PUT /api/orders/:id/status
-// @access  Private/Admin
 const updateOrderStatus = async (req, res) => {
   const { status } = req.body;
   try {
