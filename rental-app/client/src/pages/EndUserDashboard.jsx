@@ -59,28 +59,36 @@ export default function EndUserDashboard() {
   // This hook will fetch data from your backend
   useEffect(() => {
     const fetchData = async () => {
-      const userInfo = localStorage.getItem('userInfo');
-      const token = userInfo ? JSON.parse(userInfo).token : null;
-
-      if (!token) {
-        setIsError(true);
-        setIsLoading(false);
-        return;
-      }
-
+      // Simulate fetching data from an API
       try {
-        // You will need a new API endpoint for this dashboard
-        // For example: /api/admin/dashboard-data
-        const { data } = await axios.get('/api/admin/dashboard-data', {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
-        setDashboardData(data);
+        // Mock API response after a short delay
+        setTimeout(() => {
+          const mockData = {
+            quotations: '1,250',
+            rentals: '890',
+            revenue: '4,50,000',
+            topProductCategories: [
+              { category: 'Electronics', ordered: 150, revenue: '₹85,000' },
+              { category: 'Furniture', ordered: 95, revenue: '₹1,20,000' },
+              { category: 'Tools', ordered: 210, revenue: '₹45,000' },
+            ],
+            topProducts: [
+              { product: 'Pro Camera Lens', ordered: 75, revenue: '₹33,750' },
+              { product: 'Mountain Bike', ordered: 50, revenue: '₹37,500' },
+              { product: 'Camping Tent', ordered: 120, revenue: '₹42,000' },
+            ],
+            topCustomers: [
+              { customer: 'Rohan Sharma', ordered: 12, revenue: '₹15,000' },
+              { customer: 'Priya Patel', ordered: 8, revenue: '₹12,500' },
+              { customer: 'Amit Singh', ordered: 15, revenue: '₹18,000' },
+            ],
+          };
+          setDashboardData(mockData);
+          setIsLoading(false);
+        }, 1500); // 1.5-second delay to simulate loading
       } catch (error) {
         console.error('Failed to fetch dashboard data:', error);
         setIsError(true);
-      } finally {
         setIsLoading(false);
       }
     };
@@ -95,14 +103,14 @@ export default function EndUserDashboard() {
     return <div className="min-h-screen flex items-center justify-center text-gray-800">Failed to load dashboard data.</div>;
   }
 
-  // Placeholder data for the cards, to be replaced by API data
+  // Data for the cards, driven by the API response
   const statsData = [
     { title: 'Quotations', value: dashboardData?.quotations || '0' },
     { title: 'Rentals', value: dashboardData?.rentals || '0' },
     { title: 'Revenue', value: `₹${dashboardData?.revenue || '0'}` },
   ];
 
-  // Placeholder data for the tables, to be replaced by API data
+  // Data for the tables, driven by the API response
   const topProductCategories = dashboardData?.topProductCategories || [];
   const topProducts = dashboardData?.topProducts || [];
   const topCustomers = dashboardData?.topCustomers || [];

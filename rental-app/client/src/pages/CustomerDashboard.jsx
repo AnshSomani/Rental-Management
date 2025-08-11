@@ -106,8 +106,8 @@ export default function CustomerDashboard() {
                                     <h3 className="font-semibold text-gray-700 mb-3">Price Range</h3>
                                      <div className="space-y-2 text-gray-600">
                                          <p>$0 - $50</p><p>$50 - $100</p><p>$100+</p>
-                                    </div>
-                                </div>
+                                     </div>
+                                 </div>
                             </div>
                         </div>
                     </aside>
@@ -115,10 +115,7 @@ export default function CustomerDashboard() {
                         <div className="flex flex-wrap items-center justify-between mb-6 gap-4">
                             <h1 className="text-2xl font-bold text-gray-800">My Orders</h1>
                             <div className="flex items-center space-x-4">
-                                <Link to="/dashboard" className="flex items-center space-x-2 bg-purple-800 text-white font-semibold py-2 px-4 rounded-lg">
-                                    <FiShoppingBag />
-                                    <span>My Orders</span>
-                                </Link>
+                                {/* The 'My Orders' button with the icon has been removed from here. */}
                                 <div className="flex items-center space-x-1 bg-gray-200 p-1 rounded-lg">
                                      <button onClick={() => setViewMode('grid')} className={`p-2 rounded-md ${viewMode === 'grid' ? 'bg-white shadow' : ''}`}>
                                          <FiGrid className={viewMode === 'grid' ? 'text-purple-800' : 'text-gray-500'} />
@@ -129,22 +126,21 @@ export default function CustomerDashboard() {
                                  </div>
                              </div>
                          </div>
-                         
+                        
                         {orders.length === 0 ? (
                             <p className="text-center text-gray-500">You have no orders yet.</p>
                         ) : viewMode === 'grid' ? (
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                                 {orders.map(order => <OrderCard key={order._id} order={order} />)}
-                             </div>
-                         ) : (
+                            </div>
+                        ) : (
                             <div className="space-y-4">
                                 {orders.map(order => <OrderRow key={order._id} order={order} />)}
-                             </div>
-                         )}
+                            </div>
+                        )}
                      </div>
                  </div>
             </main>
         </div>
     );
 }
-
