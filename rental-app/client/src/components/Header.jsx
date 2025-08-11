@@ -1,48 +1,82 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { 
+    FiShoppingBag, 
+    FiHome,
+    FiUser,
+    FiLogOut
+ } from 'react-icons/fi';
 
 const Header = () => {
     const [user, setUser] = useState(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const navigate = useNavigate();
 
+    // Check localStorage for user info on initial render
     useEffect(() => {
         const userInfo = localStorage.getItem('userInfo');
         if (userInfo) {
             const parsedUser = JSON.parse(userInfo);
-            setUser(parsedUser.user);
+            // This assumes your userInfo object has a 'user' property
+            setUser(parsedUser.user); 
             setIsLoggedIn(true);
         } else {
+            setUser(null);
             setIsLoggedIn(false);
         }
-    }, []);
+    }, [isLoggedIn]); // Added isLoggedIn to the dependency array
 
     const handleLogout = () => {
         localStorage.removeItem('userInfo');
-        setUser(null);
-        setIsLoggedIn(false);
+        // Setting state to false will trigger the useEffect and re-render the component
+        setIsLoggedIn(false); 
         navigate('/login');
-        window.location.reload();
     };
 
     return (
-        <header>
-            <nav style={{ display: 'flex', justifyContent: 'space-between', padding: '1rem', backgroundColor: '#333', color: 'white' }}>
-                <Link to="/" style={{ color: 'white', textDecoration: 'none' }}>RentalApp</Link>
+        <header className="bg-white text-gray-800 shadow-md">
+            <nav className="flex items-center justify-between p-4 max-w-7xl mx-auto">
+                {/* Left side: Website Name */}
                 <div>
-                    <Link to="/" style={{ color: 'white', textDecoration: 'none', marginRight: '1rem' }}>Products</Link>
+                    <Link to="/" className="flex items-center space-x-2 text-xl font-bold text-indigo-600">
+                        <FiShoppingBag className="w-7 h-7" />
+                        <span>Rent It</span>
+                    </Link>
+                </div>
+                
+                {/* Right side: All other links and buttons */}
+                <div className="flex items-center space-x-6 font-medium">
+                    <Link to="/rental-shop" className="text-gray-600 hover:text-indigo-600 transition-colors">
+                        Products
+                    </Link>
+                    <Link to="/contact" className="text-gray-600 hover:text-indigo-600 transition-colors">
+                        Contact Us
+                    </Link>
                     {isLoggedIn ? (
                         <>
-                            <Link to="/dashboard" style={{ color: 'white', textDecoration: 'none', marginRight: '1rem' }}>Dashboard</Link>
+                            <Link to="/dashboard" className="text-gray-600 hover:text-indigo-600 transition-colors">
+                                Dashboard
+                            </Link>
                             {user && user.role === 'admin' && (
-                                <Link to="/admin" style={{ color: 'white', textDecoration: 'none', marginRight: '1rem' }}>Admin</Link>
+                                <Link to="/admin" className="text-gray-600 hover:text-indigo-600 transition-colors">
+                                    Admin
+                                </Link>
                             )}
-                            <button onClick={handleLogout}>Logout</button>
+                            <div className="flex items-center gap-2">
+                                <span className="font-semibold text-indigo-600">{user?.name}</span>
+                                <button onClick={handleLogout} className="text-gray-600 hover:text-indigo-600 transition-colors">
+                                    <FiLogOut className="w-5 h-5" />
+                                </button>
+                            </div>
                         </>
                     ) : (
                         <>
-                            <Link to="/login" style={{ color: 'white', textDecoration: 'none', marginRight: '1rem' }}>Login</Link>
-                            <Link to="/register" style={{ color: 'white', textDecoration: 'none' }}>Register</Link>
+                            <Link to="/login" className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                                <span className="flex items-center gap-2"><FiUser />Login</span>
+                            </Link>
+                            <Link to="/register" className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                                Register
+                            </Link>
                         </>
                     )}
                 </div>

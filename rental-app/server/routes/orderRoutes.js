@@ -1,49 +1,15 @@
-const RentalOrder = require('../models/RentalOrder');
+const express = require('express');
+const router = express.Router(); 
+const { createOrder, getMyOrders, updateOrderStatus } = require('../controllers/orderController');
+const { protect, admin } = require('../middleware/authMiddleware');
 
-const createOrder = async (req, res) => {
-  const { productId, startDate, endDate, totalPrice } = req.body;
-  try {
-    const userId = req.user._id;
+router.route('/')
+    .post(protect, createOrder);
 
-    const order = new RentalOrder({
-      user: userId,
-      product: productId,
-      startDate,
-      endDate,
-      totalPrice,
-    });
+router.route('/myorders')
+    .get(protect, getMyOrders);
 
-    const createdOrder = await order.save();
-    res.status(201).json({ message: 'Order created successfully', orderId: createdOrder._id });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error' });
-  }
-};
+router.route('/:id')
+    .put(protect, admin, updateOrderStatus);
 
-const getMyOrders = async (req, res) => {
-  try {
-    const userId = req.user._id;
-    const orders = await RentalOrder.find({ user: userId }).populate('product');
-    res.json(orders);
-  } catch (error) {
-    res.status(500).json({ message: 'Server error' });
-  }
-};
-
-const updateOrderStatus = async (req, res) => {
-  const { status } = req.body;
-  try {
-    const order = await RentalOrder.findById(req.params.id);
-    if (order) {
-      order.orderStatus = status;
-      const updatedOrder = await order.save();
-      res.json(updatedOrder);
-    } else {
-      res.status(404).json({ message: 'Order not found' });
-    }
-  } catch (error) {
-    res.status(500).json({ message: 'Server error' });
-  }
-};
-
-module.exports = { createOrder, getMyOrders, updateOrderStatus };
+module.exports = router;

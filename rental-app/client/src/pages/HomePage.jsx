@@ -19,10 +19,15 @@ const HomePage = () => {
   }, []);
 
   return (
-    <div style={{ padding: '2rem' }}>
-      <h1>Available Products</h1>
+    <div
+      style={{
+        backgroundColor: '#ffffff',
+        minHeight: '100vh',
+      }}
+    >
+      <h1 style={{ marginBottom: '1.5rem' }}>Available Products</h1>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
-        {products.map(product => (
+        {products.map((product) => (
           <ProductCard key={product._id} product={product} />
         ))}
       </div>

@@ -8,6 +8,9 @@ import AdminDashboard from './pages/AdminDashboard';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import RentalShop from './pages/RentalShop';
+import AdminProductForm from './pages/AdminProductForm';
+import ContactUs from './pages/ContactUs';
+import EndUserDashboard from './pages/EndUserDashboard';
 
 function App() {
   return (
@@ -15,15 +18,17 @@ function App() {
       <Header />
       <main style={{ padding: '2rem' }}>
         <Routes>
+          {/* All Routes are now public */}
           <Route path="/" element={<HomePage />} />
           <Route path="/products/:productId" element={<ProductDetailPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/rental-shop" element={<RentalShop />} />
-          
-          <Route path="/dashboard" element={<CustomerDashboard />} />
+          <Route path="/rental-shop" element={<CustomerDashboard />} />
+          <Route path="/contact" element={<ContactUs />} />
+          <Route path="/dashboard" element={<RentalShop />} />
           <Route path="/admin" element={<AdminDashboard />} />
-
+          <Route path="/admin_product" element= {<AdminProductForm/>} />
+          <Route path="/seller-dashboard" element={<EndUserDashboard />} />
         </Routes>
       </main>
     </Router>
