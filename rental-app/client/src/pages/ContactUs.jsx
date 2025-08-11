@@ -41,14 +41,17 @@ const ContactUs = () => {
             </div>
 
             <div className="relative w-full max-w-md">
-                <div className="bg-white/80 backdrop-blur-xl border border-gray-200/90 rounded-2xl shadow-2xl p-8 relative overflow-hidden">
+                {/* MODIFICATION: Adjusted padding for smaller screens (p-6) and larger screens (sm:p-8) */}
+                <div className="bg-white/80 backdrop-blur-xl border border-gray-200/90 rounded-2xl shadow-2xl p-6 sm:p-8 relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-800 via-purple-800 to-pink-700 rounded-t-2xl"></div>
                     
-                    <div className="text-center mb-8">
+                    {/* MODIFICATION: Adjusted margin-bottom for responsiveness */}
+                    <div className="text-center mb-6 sm:mb-8">
                         <div className="mx-auto w-16 h-16 bg-gradient-to-br from-indigo-900 to-purple-900 rounded-xl flex items-center justify-center mb-4 shadow-lg">
                             <FiPhone className="text-white text-2xl" />
                         </div>
-                        <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-800 to-purple-900 bg-clip-text text-transparent mb-2">
+                        {/* MODIFICATION: Adjusted font size for responsiveness (text-2xl on small, text-3xl on larger) */}
+                        <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-indigo-800 to-purple-900 bg-clip-text text-transparent mb-2">
                             Reach Out to Us
                         </h1>
                         <p className="text-gray-500 text-sm">We're here to help! Fill out the form to get in touch.</p>

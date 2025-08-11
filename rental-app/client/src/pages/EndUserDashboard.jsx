@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom'; // Import Link for navigation
 import { Search, Bell, ChevronDown, Home, ShoppingCart, Package, FileText, BarChart2, Settings, User } from 'lucide-react';
 
 // Reusable component for statistics cards
@@ -116,12 +117,12 @@ export default function EndUserDashboard() {
   const topCustomers = dashboardData?.topCustomers || [];
 
   const navItems = [
-    { name: 'Dashboard', icon: Home },
-    { name: 'Rental', icon: ShoppingCart },
-    { name: 'Order', icon: FileText },
-    { name: 'Products', icon: Package },
-    { name: 'Reporting', icon: BarChart2 },
-    { name: 'Setting', icon: Settings },
+    { name: 'Dashboard', icon: Home, path: '/admin' },
+    { name: 'Rental', icon: ShoppingCart, path: '/rentals' }, //doesnt work
+    { name: 'Order', icon: FileText, path: '/orders' }, //doesnt work
+    { name: 'Products', icon: Package, path: '/admin_product' },
+    { name: 'Reporting', icon: BarChart2, path: '/reporting' }, // doesnt work
+    { name: 'Setting', icon: Settings, path: '/settings' }, //doesnt work
   ];
 
   return (
@@ -137,10 +138,11 @@ export default function EndUserDashboard() {
                          <h1 className="text-xl font-bold text-gray-800">App</h1>
                     </div>
                     <nav className="hidden md:flex items-center space-x-2">
+                        {/* MODIFICATION: Changed <a> tag to <Link> for client-side routing */}
                         {navItems.map((item) => (
-                            <a
+                            <Link
                                 key={item.name}
-                                href="#"
+                                to={item.path}
                                 onClick={() => setActiveTab(item.name)}
                                 className={`flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                                 activeTab === item.name
@@ -150,7 +152,7 @@ export default function EndUserDashboard() {
                             >
                                 <item.icon className="w-5 h-5 mr-2" />
                                 <span>{item.name}</span>
-                            </a>
+                            </Link>
                         ))}
                     </nav>
                 </div>

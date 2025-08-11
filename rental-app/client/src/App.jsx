@@ -12,6 +12,7 @@ import AdminProductForm from './pages/AdminProductForm';
 import ContactUs from './pages/ContactUs';
 import EndUserDashboard from './pages/EndUserDashboard';
 import AddProductPage from './pages/AddProductPage';
+import Rentals from './pages/Rentals'
 
 function App() {
   return (
@@ -19,17 +20,17 @@ function App() {
       <Header />
       <main style={{ padding: '2rem' }}>
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<RentalShop />} />
           <Route path="/products/:productId" element={<ProductDetailPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/rental-shop" element={<RentalShop />} />
           <Route path="/contact" element={<ContactUs />} />
           <Route path="/dashboard" element={<CustomerDashboard />} />
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/admin_product" element= {<AdminProductForm/>} />
+          <Route path="/admin" element={<EndUserDashboard />} />
+          <Route path="/admin_product" element= {<AddProductPage />} />
           <Route path="/lender/products" element={<AddProductPage />} />
-          <Route path="/seller-dashboard" element={<EndUserDashboard />} />
+          <Route path="/rentals" element={<Rentals />} />
         </Routes>
       </main>
     </Router>

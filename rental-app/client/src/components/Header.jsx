@@ -55,11 +55,11 @@ const Header = () => {
                     {isLoggedIn ? (
                         <>
                             <Link to="/dashboard" className="text-gray-600 hover:text-indigo-600 transition-colors">
-                                Dashboard
+                                Cart
                             </Link>
                             {user && user.role === 'admin' && (
                                 <Link to="/admin" className="text-gray-600 hover:text-indigo-600 transition-colors">
-                                    Admin
+                                    Lender
                                 </Link>
                             )}
                             <div className="flex items-center gap-2">

@@ -10,30 +10,32 @@ const RentalShop = () => {
     const [view, setView] = useState('card'); // 'card' or 'list'
 
     useEffect(() => {
- 
-const fetchProducts = async () => {
-try {
-// Fetch products from your backend API
-const { data } = await axios.get('/api/products');
-setProducts(data);
-} catch (error) {
-console.error('Error fetching products:', error);
-setIsError(true);
-} finally {
-setIsLoading(false);
-}
-};
+        const fetchProducts = async () => {
+            try {
+                // MODIFICATION: Switched back to fetching dynamic data from the API
+                const { data } = await axios.get('/api/products');
+                setProducts(data);
+            } catch (error) {
+                console.error('Error fetching products:', error);
+                setIsError(true);
+            } finally {
+                setIsLoading(false);
+            }
+        };
 
-
-fetchProducts();
-}, []);
+        fetchProducts();
+    }, []);
 
     const renderCardView = () => (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {products.map(product => (
                 <div key={product._id} className="bg-white border border-gray-200 rounded-2xl p-4 flex flex-col items-center text-center shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                    <div className="w-full h-32 bg-slate-100 rounded-xl flex items-center justify-center text-5xl mb-4">
-                        🛍
+                    <div className="w-full h-40 bg-gray-200 rounded-xl mb-4 overflow-hidden">
+                        <img 
+                            src={product.images && product.images[0] ? product.images[0] : 'https://placehold.co/400x300/e2e8f0/64748b?text=No+Image'}
+                            alt={product.name}
+                            className="w-full h-full object-cover"
+                        />
                     </div>
                     <h3 className="font-bold text-gray-800 text-md mb-1 truncate w-full">{product.name}</h3>
                     <p className="text-gray-600 text-sm mb-3 h-10 overflow-hidden">{product.description}</p>
@@ -57,8 +59,12 @@ fetchProducts();
         <div className="space-y-4">
             {products.map(product => (
                 <div key={product._id} className="bg-white border border-gray-200 rounded-2xl p-4 flex items-center space-x-6 shadow-sm w-full hover:shadow-md hover:border-purple-300 transition-all">
-                    <div className="w-24 h-24 bg-slate-100 rounded-xl flex items-center justify-center text-4xl flex-shrink-0">
-                        🛍
+                    <div className="w-24 h-24 rounded-xl flex-shrink-0 overflow-hidden bg-gray-200">
+                        <img 
+                            src={product.images && product.images[0] ? product.images[0] : 'https://placehold.co/200x200/e2e8f0/64748b?text=No+Image'}
+                            alt={product.name}
+                            className="w-full h-full object-cover"
+                        />
                     </div>
                     <div className="flex-grow">
                         <h3 className="font-bold text-gray-800 text-lg">{product.name}</h3>
