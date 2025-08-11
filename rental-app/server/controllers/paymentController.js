@@ -1,6 +1,6 @@
 // server/controllers/paymentController.js
 const crypto = require('crypto');
-const { razorpayInstance } = require('../server');
+const { getRazorpayInstance } = require('../config/razorpay');
 const RentalOrder = require('../models/RentalOrder');
 
 // @desc    Create a new Razorpay order
@@ -14,7 +14,7 @@ const createRazorpayOrder = async (req, res) => {
       currency: 'INR',
       receipt: 'order_rcptid_' + orderId, // Unique receipt ID
     };
-    const razorpayOrder = await razorpayInstance.orders.create(options);
+    const razorpayOrder = await getRazorpayInstance().orders.create(options);
     res.status(200).json(razorpayOrder);
   } catch (error) {
     console.error('Error creating Razorpay order:', error);
@@ -26,7 +26,7 @@ const createRazorpayOrder = async (req, res) => {
 // @route   POST /api/payment/verify
 // @access  Private
 const verifyPayment = async (req, res) => {
-  const { razorpay_order_id, razorpay_payment_id, razorpay_signature, orderId } = req.body;
+  const { razorpay_order_id, razorpay_payment_id, razorpay_signature, orderId, amount } = req.body;
 
   const shasum = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET);
   shasum.update(`${razorpay_order_id}|${razorpay_payment_id}`);
@@ -35,16 +35,20 @@ const verifyPayment = async (req, res) => {
   if (digest === razorpay_signature) {
     // Payment is valid, update the order in your database
     const order = await RentalOrder.findById(orderId);
-    if (order) {
-      order.paymentStatus = 'paid';
-      order.paymentId = razorpay_payment_id;
-      await order.save();
-      res.status(200).json({ message: 'Payment successful', order });
-    } else {
-      res.status(404).json({ message: 'Order not found' });
-    }
+    if (!order) return res.status(404).json({ message: 'Order not found' });
+
+    // Treat 'amount' as INR major units; reduce amountDue
+    const paid = Number(amount || order.amountDue || order.totalPrice);
+    const remaining = Math.max(0, (order.amountDue || 0) - paid);
+
+    order.amountDue = remaining;
+    order.paymentId = razorpay_payment_id;
+    order.paymentStatus = remaining === 0 ? 'paid' : 'partial';
+
+    await order.save();
+    return res.status(200).json({ message: 'Payment successful', order });
   } else {
-    res.status(400).json({ message: 'Invalid signature' });
+    return res.status(400).json({ message: 'Invalid signature' });
   }
 };
 

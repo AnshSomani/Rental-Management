@@ -15,11 +15,17 @@ const authRoutes = require('./routes/authRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const productRoutes = require('./routes/productRoutes');
 const adminRoutes = require('./routes/adminRoutes'); // New admin routes
+const paymentRoutes = require('./routes/paymentRoutes');
+const pricingRoutes = require('./routes/pricingRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/admin', adminRoutes); // Mount the new admin routes
+app.use('/api/payment', paymentRoutes);
+app.use('/api/pricing', pricingRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Connect to MongoDB and then start the server
 const MONGODB_URI = process.env.MONGODB_URI;

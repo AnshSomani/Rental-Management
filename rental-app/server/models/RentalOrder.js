@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const rentalOrderSchema = new mongoose.Schema({
-  customer: {
+  user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true,
@@ -11,6 +11,11 @@ const rentalOrderSchema = new mongoose.Schema({
     ref: 'Product',
     required: true,
   },
+  quantity: {
+    type: Number,
+    default: 1,
+    min: 1,
+  },
   startDate: {
     type: Date,
     required: true,
@@ -19,13 +24,26 @@ const rentalOrderSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
+  pickupScheduledAt: {
+    type: Date,
+  },
+  returnScheduledAt: {
+    type: Date,
+  },
+  actualReturnAt: {
+    type: Date,
+  },
   totalPrice: {
     type: Number,
     required: true,
   },
+  amountDue: {
+    type: Number,
+    default: 0,
+  },
   paymentStatus: {
     type: String,
-    enum: ['pending', 'paid'],
+    enum: ['pending', 'paid', 'partial'],
     default: 'pending',
   },
   paymentId: {
@@ -33,8 +51,12 @@ const rentalOrderSchema = new mongoose.Schema({
   },
   orderStatus: {
     type: String,
-    enum: ['reservation', 'pickup', 'return'],
+    enum: ['quotation', 'reservation', 'pickup', 'return', 'completed', 'cancelled'],
     default: 'reservation',
+  },
+  lateFee: {
+    type: Number,
+    default: 0,
   },
 }, { timestamps: true });
 

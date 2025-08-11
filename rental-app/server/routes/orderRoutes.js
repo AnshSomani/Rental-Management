@@ -10,6 +10,6 @@ router.route('/myorders')
     .get(protect, getMyOrders);
 
 router.route('/:id')
-    .put(protect, admin, updateOrderStatus);
+    .put(protect, updateOrderStatus);
 
 module.exports = router;

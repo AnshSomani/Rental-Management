@@ -1,5 +1,6 @@
 // server/controllers/productController.js
 const Product = require('../models/Product');
+const RentalOrder = require('../models/RentalOrder');
 
 // @desc    Fetch all products
 // @route   GET /api/products
@@ -86,4 +87,29 @@ const deleteProduct = async (req, res) => {
   }
 };
 
-module.exports = { getProducts, getProductById, createProduct, updateProduct, deleteProduct };
+// @desc    Get availability for product in date range
+// @route   GET /api/products/:id/availability?startDate&endDate
+// @access  Public
+const getProductAvailability = async (req, res) => {
+  const { id } = req.params;
+  const { startDate, endDate } = req.query;
+  if (!startDate || !endDate) return res.status(400).json({ message: 'startDate and endDate are required' });
+  try {
+    const product = await Product.findById(id);
+    if (!product) return res.status(404).json({ message: 'Product not found' });
+
+    const overlapping = await RentalOrder.aggregate([
+      { $match: { product: product._id, orderStatus: { $in: ['reservation', 'pickup'] } } },
+      { $match: { $expr: { $and: [ { $lt: ['$startDate', new Date(endDate)] }, { $gt: ['$endDate', new Date(startDate)] } ] } } },
+      { $group: { _id: null, qty: { $sum: '$quantity' } } },
+    ]);
+    const reservedQty = overlapping.length ? overlapping[0].qty : 0;
+    const available = Math.max(0, (product.stock || 0) - reservedQty);
+    return res.json({ available, stock: product.stock, reservedQty });
+  } catch (error) {
+    console.error('Error computing availability:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+module.exports = { getProducts, getProductById, createProduct, updateProduct, deleteProduct, getProductAvailability };

@@ -10,7 +10,7 @@ const RazorpayButton = ({ amount, orderId }) => {
       const razorpayOrder = data;
 
       const options = {
-        key: 'Yrzp_test_RU4KofSwIRBZqQ', // Replace with your test key
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_placeholder',
         amount: razorpayOrder.amount,
         currency: razorpayOrder.currency,
         name: 'Rental App',
@@ -23,6 +23,7 @@ const RazorpayButton = ({ amount, orderId }) => {
             razorpay_payment_id: response.razorpay_payment_id,
             razorpay_signature: response.razorpay_signature,
             orderId,
+            amount,
           });
           alert('Payment successful!');
           window.location.reload(); // Or redirect to a success page
