@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import PasswordStrengthMeter from '../../components/PasswordStrengthMeter.jsx';
 import { EyeIcon, EyeOffIcon } from '../../assets/icons.jsx';
-// import { useApp } from '../../context/AppContext'; // This will be used later
+import { useApp } from '../../context/AppContext';
 
 const RegisterPage = () => {
-    // const { register, error } = useApp(); // This will be replaced by context
+    const { register } = useApp();
     const navigate = useNavigate();
 
     const [name, setName] = useState('');
@@ -23,13 +23,12 @@ const RegisterPage = () => {
             return;
         }
         setFormError('');
-        console.log('Registering user...');
-        // const success = await register(name, email, phone, password);
-        // if (success) {
-        //     navigate('/');
-        // } else {
-        //     setFormError('Registration failed. User may already exist.');
-        // }
+        try {
+            await register({ name, email, phone, password });
+            navigate('/');
+        } catch (err) {
+            setFormError(err.response?.data?.message || 'Registration failed. User may already exist.');
+        }
     };
 
     return (

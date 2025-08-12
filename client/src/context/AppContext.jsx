@@ -59,6 +59,21 @@ export const AppProvider = ({ children }) => {
         }
     };
 
+    // User register
+    const register = async ({ name, email, phone, password, role = 'customer' }) => {
+        try {
+            const config = { headers: { 'Content-Type': 'application/json' } };
+            const { data } = await axios.post('/api/users', { name, email, phone, password, role }, config);
+            setUser(data);
+            setAxiosAuthHeader(data.token);
+            localStorage.setItem('userInfo', JSON.stringify(data));
+            return data;
+        } catch (err) {
+            setError(err.response?.data?.message || 'Registration failed');
+            throw err;
+        }
+    };
+
     // User logout
     const logout = () => {
         localStorage.removeItem('userInfo');
@@ -178,6 +193,7 @@ export const AppProvider = ({ children }) => {
         error,
         login,
         logout,
+        register,
         fetchProducts,
         fetchProductById,
         fetchMyProducts,
