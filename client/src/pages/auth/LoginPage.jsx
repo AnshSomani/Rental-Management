@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-// import { useApp } from '../../context/AppContext'; // This will be used later
+import { useApp } from '../../context/AppContext';
 
 const LoginPage = () => {
-    // const { login, user } = useApp(); // This will be replaced by context
-    const user = null; // Placeholder for now
+    const { login, user } = useApp();
     const navigate = useNavigate();
 
     const [email, setEmail] = useState('');
@@ -18,10 +17,13 @@ const LoginPage = () => {
         }
     }, [user, navigate]);
 
-    const submitHandler = (e) => {
+    const submitHandler = async (e) => {
         e.preventDefault();
-        // login(email, password, role);
-        console.log("Logging in with:", { email, password, role });
+        try {
+            await login(email, password, role);
+        } catch (err) {
+            setError(err.response?.data?.message || 'Login failed');
+        }
     };
     
     // Pre-fill credentials based on role for easier testing

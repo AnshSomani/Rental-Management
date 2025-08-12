@@ -1,17 +1,15 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { HomeIcon, ShoppingCartIcon, HeartIcon, UserIcon, ChevronDownIcon } from '../assets/icons.jsx';
-// import { useApp } from '../context/AppContext'; // This will be used later
+import { useApp } from '../context/AppContext';
 
 const Header = () => {
-    // const { user, logout, cart } = useApp(); // This will be replaced by context
-    const user = { name: 'Adam', role: 'customer' }; // Placeholder for now
-    const cart = []; // Placeholder for now
+    const { user, logout, cart } = useApp();
     const navigate = useNavigate();
     const [showProfileDropdown, setShowProfileDropdown] = useState(false);
 
     const handleLogout = () => {
-        // logout(); // This will be enabled later
+        logout();
         navigate('/login');
     };
 

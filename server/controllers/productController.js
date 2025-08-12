@@ -5,7 +5,7 @@ import Product from '../models/productModel.js';
 // @access  Public
 const getProducts = async (req, res) => {
     try {
-        const products = await Product.find({}).populate('user', 'name');
+        const products = await Product.find({}).populate('lender', 'name');
         res.json(products);
     } catch (error) {
         res.status(500).json({ message: 'Server Error' });
@@ -17,7 +17,7 @@ const getProducts = async (req, res) => {
 // @access  Public
 const getProductById = async (req, res) => {
     try {
-        const product = await Product.findById(req.params.id).populate('user', 'name email');
+        const product = await Product.findById(req.params.id).populate('lender', 'name email');
         if (product) {
             res.json(product);
         } else {
@@ -33,19 +33,18 @@ const getProductById = async (req, res) => {
 // @access  Private/Lender
 const createProduct = async (req, res) => {
     try {
-        const { name, category, description, price, priceList, imageUrl, color, terms, pickupAddress } = req.body;
+        const { name, category, description, priceList, imageUrl, color, terms, pickupAddress } = req.body;
 
         const product = new Product({
             name,
             category,
             description,
-            price,
             priceList,
             imageUrl,
             color,
             terms,
             pickupAddress,
-            user: req.user._id,
+            lender: req.user._id,
         });
 
         const createdProduct = await product.save();
@@ -60,7 +59,7 @@ const createProduct = async (req, res) => {
 // @access  Private/Lender
 const getMyProducts = async (req, res) => {
     try {
-        const products = await Product.find({ user: req.user._id });
+        const products = await Product.find({ lender: req.user._id });
         res.json(products);
     } catch (error) {
         res.status(500).json({ message: 'Server Error' });

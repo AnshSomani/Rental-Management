@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-// import { useApp } from '../../context/AppContext'; // This will be used later
+import { useNavigate, Link } from 'react-router-dom';
+import { useApp } from '../../context/AppContext';
 
 const EditProfilePage = () => {
-    // const { user, updateUser, error } = useApp(); // This will be replaced by context
-    const user = { name: 'Adam', email: 'adam@example.com', phone: '9876543210', role: 'customer' }; // Placeholder
+    const { user, updateUser } = useApp();
     const navigate = useNavigate();
 
     const [name, setName] = useState('');
@@ -23,20 +22,20 @@ const EditProfilePage = () => {
         }
     }, [user, navigate]);
 
-    const handleDetailsSubmit = (e) => {
+    const handleDetailsSubmit = async (e) => {
         e.preventDefault();
-        // updateUser({ name, phone });
+        await updateUser({ name, phone });
         setMessage('Profile details updated successfully!');
         setTimeout(() => setMessage(''), 3000);
     };
 
-    const handlePasswordSubmit = (e) => {
+    const handlePasswordSubmit = async (e) => {
         e.preventDefault();
         if (newPassword !== confirmNewPassword) {
             setMessage('New passwords do not match.');
             return;
         }
-        // updateUser({ currentPassword, newPassword });
+        await updateUser({ name, phone, password: newPassword });
         setMessage('Password updated successfully!');
         setTimeout(() => setMessage(''), 3000);
     };
@@ -56,7 +55,7 @@ const EditProfilePage = () => {
                         </div>
                         <div className="mb-4">
                             <label className="block text-sm mb-1 font-medium">Email</label>
-                            <input type="email" value={user.email} disabled className="w-full p-2 bg-gray-900 rounded border border-gray-700 cursor-not-allowed" />
+                            <input type="email" value={user?.email} disabled className="w-full p-2 bg-gray-900 rounded border border-gray-700 cursor-not-allowed" />
                         </div>
                         <div className="mb-6">
                             <label className="block text-sm mb-1 font-medium">Phone Number</label>
@@ -87,7 +86,7 @@ const EditProfilePage = () => {
                 </div>
             </div>
             <div className="text-center mt-8">
-                <Link to={user.role === 'lender' ? '/dashboard' : '/'} className="text-indigo-400 hover:underline">
+                <Link to={user?.role === 'lender' ? '/dashboard' : '/'} className="text-indigo-400 hover:underline">
                     Back to Home
                 </Link>
             </div>

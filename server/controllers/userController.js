@@ -9,7 +9,29 @@ import generateToken from '../utils/generateToken.js';
 const authUser = async (req, res) => {
     const { email, password, role } = req.body;
 
-    const user = await User.findOne({ email, role });
+    // Temporary bypass option for development/testing
+    if (process.env.AUTH_BYPASS === 'true') {
+        let user = await User.findOne({ email });
+        if (!user) {
+            const fallbackName = email?.split('@')[0] || 'User';
+            user = await User.create({
+                name: fallbackName,
+                email,
+                password: password || 'password123',
+                phone: req.body.phone || '0000000000',
+                role: role || 'customer',
+            });
+        }
+        return res.json({
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            token: generateToken(user._id),
+        });
+    }
+
+    const user = await User.findOne({ email });
 
     if (user && (await user.matchPassword(password))) {
         res.json({
@@ -21,7 +43,7 @@ const authUser = async (req, res) => {
         });
     } else {
         res.status(401);
-        throw new Error('Invalid email, password, or role');
+        throw new Error('Invalid email or password');
     }
 };
 
