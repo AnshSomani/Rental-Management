@@ -1,17 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-// import { useApp } from '../../context/AppContext'; // This will be used later
+import { useApp } from '../../context/AppContext';
 
 const LenderOrdersPage = () => {
-    // const { quotations } = useApp(); // This will be replaced by context
-    
-    // Placeholder data until context is fully wired
-    const quotations = [
-        { id: 'QUO-1', total: 157.50, status: 'Returned', orderDate: '2025-08-12', customer: { name: 'Adam' } },
-        { id: 'QUO-2', total: 262.50, status: 'Returned', orderDate: '2025-07-15', customer: { name: 'Jane Doe' } },
-    ];
+    const { lenderQuotations, fetchLenderQuotations } = useApp();
 
-    const completedOrders = quotations.filter(q => q.status === 'Returned');
+    useEffect(() => {
+        fetchLenderQuotations();
+    }, []);
+
+    const completedOrders = (lenderQuotations || []).filter(q => q.status === 'Returned');
 
     return (
         <div className="p-8">
@@ -37,18 +35,18 @@ const LenderOrdersPage = () => {
                             </tr>
                         ) : (
                             completedOrders.map(order => (
-                                <tr key={order.id} className="border-b border-gray-700 last:border-b-0">
-                                    <td className="p-4 font-mono">{order.id}</td>
-                                    <td>{order.customer.name}</td>
-                                    <td>{order.orderDate}</td>
-                                    <td>₹{order.total.toFixed(2)}</td>
+                                <tr key={order._id} className="border-b border-gray-700 last:border-b-0">
+                                    <td className="p-4 font-mono">{order._id}</td>
+                                    <td>{order.customer?.name || '-'}</td>
+                                    <td>{new Date(order.createdAt).toLocaleDateString()}</td>
+                                    <td>₹{(order.total || 0).toFixed(2)}</td>
                                     <td>
                                         <span className="bg-gray-700 text-gray-300 px-2 py-1 rounded-full text-xs font-medium">
                                             {order.status}
                                         </span>
                                     </td>
                                     <td className="p-4">
-                                        <Link to={`/quotation/${order.id}`} className="text-indigo-400 hover:underline font-semibold">
+                                        <Link to={`/quotation/${order._id}`} className="text-indigo-400 hover:underline font-semibold">
                                             View Details
                                         </Link>
                                     </td>

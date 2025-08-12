@@ -9,14 +9,26 @@ export const useApp = () => {
     return useContext(AppContext);
 };
 
+// Helper to set/remove Authorization header
+const setAxiosAuthHeader = (token) => {
+    if (token) {
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    } else {
+        delete axios.defaults.headers.common['Authorization'];
+    }
+};
+
 // Create the provider component
 export const AppProvider = ({ children }) => {
     // --- STATE MANAGEMENT ---
     const [user, setUser] = useState(null);
     const [products, setProducts] = useState([]);
+    const [myProducts, setMyProducts] = useState([]);
     const [cart, setCart] = useState([]);
     const [wishlist, setWishlist] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [customerQuotations, setCustomerQuotations] = useState([]);
+    const [lenderQuotations, setLenderQuotations] = useState([]);
+    const [isAppReady, setIsAppReady] = useState(false);
     const [error, setError] = useState(null);
 
     // --- EFFECTS ---
@@ -24,18 +36,22 @@ export const AppProvider = ({ children }) => {
     useEffect(() => {
         const storedUser = localStorage.getItem('userInfo');
         if (storedUser) {
-            setUser(JSON.parse(storedUser));
+            const parsed = JSON.parse(storedUser);
+            setUser(parsed);
+            setAxiosAuthHeader(parsed.token);
         }
-        setLoading(false);
+        setIsAppReady(true);
     }, []);
 
     // --- API FUNCTIONS ---
     // User login
     const login = async (email, password, role) => {
         try {
+            const payload = role ? { email, password, role } : { email, password };
             const config = { headers: { 'Content-Type': 'application/json' } };
-            const { data } = await axios.post('/api/users/login', { email, password, role }, config);
+            const { data } = await axios.post('/api/users/login', payload, config);
             setUser(data);
+            setAxiosAuthHeader(data.token);
             localStorage.setItem('userInfo', JSON.stringify(data));
             return data;
         } catch (err) {
@@ -44,28 +60,129 @@ export const AppProvider = ({ children }) => {
         }
     };
 
+    // User register
+    const register = async ({ name, email, phone, password, role = 'customer' }) => {
+        try {
+            const config = { headers: { 'Content-Type': 'application/json' } };
+            const { data } = await axios.post('/api/users', { name, email, phone, password, role }, config);
+            setUser(data);
+            setAxiosAuthHeader(data.token);
+            localStorage.setItem('userInfo', JSON.stringify(data));
+            return data;
+        } catch (err) {
+            setError(err.response?.data?.message || 'Registration failed');
+            throw err;
+        }
+    };
+
     // User logout
     const logout = () => {
         localStorage.removeItem('userInfo');
+        setAxiosAuthHeader(null);
         setUser(null);
+        setCart([]);
+        setWishlist([]);
+        setCustomerQuotations([]);
+        setLenderQuotations([]);
     };
     
     // Fetch all products
     const fetchProducts = async () => {
         try {
-            setLoading(true);
             const { data } = await axios.get('/api/products');
-            setProducts(data);
-            setLoading(false);
+            const normalized = (data || []).map((p) => {
+                const fallbackPrice = typeof p.price === 'number' ? p.price : 0;
+                const priceList = p.priceList && typeof p.priceList.day === 'number'
+                    ? p.priceList
+                    : { day: fallbackPrice, week: fallbackPrice ? fallbackPrice * 6 : 0, month: fallbackPrice ? fallbackPrice * 20 : 0 };
+                const imageUrl = p.imageUrl || p.image || '';
+                return { ...p, priceList, imageUrl };
+            });
+            setProducts(normalized);
         } catch (err) {
             setError(err.response?.data?.message || 'Could not fetch products');
-            setLoading(false);
         }
     };
 
+    const fetchProductById = async (id) => {
+        const { data } = await axios.get(`/api/products/${id}`);
+        const p = data || {};
+        const fallbackPrice = typeof p.price === 'number' ? p.price : 0;
+        const priceList = p.priceList && typeof p.priceList.day === 'number'
+            ? p.priceList
+            : { day: fallbackPrice, week: fallbackPrice ? fallbackPrice * 6 : 0, month: fallbackPrice ? fallbackPrice * 20 : 0 };
+        const imageUrl = p.imageUrl || p.image || '';
+        return { ...p, priceList, imageUrl };
+    };
+
+    const fetchMyProducts = async () => {
+        const { data } = await axios.get('/api/products/myproducts');
+        setMyProducts(data);
+        return data;
+    };
+
+    // Quotations
+    const fetchMyQuotations = async () => {
+        const { data } = await axios.get('/api/quotations/myquotations');
+        setCustomerQuotations(data);
+        return data;
+    };
+
+    const fetchLenderQuotations = async () => {
+        const { data } = await axios.get('/api/quotations/lender');
+        setLenderQuotations(data);
+        return data;
+    };
+
+    const updateQuotationStatus = async (id, status) => {
+        const { data } = await axios.put(`/api/quotations/${id}/status`, { status });
+        // Refresh lender quotations after update
+        await fetchLenderQuotations();
+        return data;
+    };
+
+    const requestQuotation = async ({ productsPayload, totals, delivery }) => {
+        const { data } = await axios.post('/api/quotations', {
+            products: productsPayload,
+            ...totals,
+            ...delivery,
+        });
+        return data;
+    };
+
+    const fetchQuotationById = async (id) => {
+        const { data } = await axios.get(`/api/quotations/${id}`);
+        return data;
+    };
+
+    // Profile
+    const updateUser = async ({ name, phone, password }) => {
+        const { data } = await axios.put('/api/users/profile', { name, phone, password });
+        setUser(data);
+        localStorage.setItem('userInfo', JSON.stringify(data));
+        return data;
+    };
+
     // --- CART & WISHLIST FUNCTIONS ---
-    const addToCart = (product) => {
-        setCart(prevCart => [...prevCart, { ...product, quantity: 1 }]);
+    const addToCart = (product, quantity = 1) => {
+        setCart(prevCart => {
+            const existing = prevCart.find(item => (item.product._id || item.product.id) === (product._id || product.id));
+            if (existing) {
+                return prevCart.map(item => (item.product._id || item.product.id) === (product._id || product.id)
+                    ? { ...item, quantity: item.quantity + quantity }
+                    : item
+                );
+            }
+            return [...prevCart, { product, quantity }];
+        });
+    };
+
+    const updateCartQuantity = (productId, nextQty) => {
+        setCart(prevCart => prevCart.map(item => (item.product._id || item.product.id) === productId ? { ...item, quantity: nextQty } : item));
+    };
+
+    const removeFromCart = (productId) => {
+        setCart(prevCart => prevCart.filter(item => (item.product._id || item.product.id) !== productId));
     };
     
     const addToWishlist = (product) => {
@@ -76,20 +193,34 @@ export const AppProvider = ({ children }) => {
     const value = {
         user,
         products,
+        myProducts,
         cart,
         wishlist,
-        loading,
+        customerQuotations,
+        lenderQuotations,
+        appReady: isAppReady,
         error,
         login,
         logout,
+        register,
         fetchProducts,
+        fetchProductById,
+        fetchMyProducts,
+        fetchMyQuotations,
+        fetchLenderQuotations,
+        updateQuotationStatus,
+        requestQuotation,
+        fetchQuotationById,
+        updateUser,
         addToCart,
+        updateCartQuantity,
+        removeFromCart,
         addToWishlist,
     };
 
     return (
         <AppContext.Provider value={value}>
-            {!loading && children}
+            {isAppReady && children}
         </AppContext.Provider>
     );
 };

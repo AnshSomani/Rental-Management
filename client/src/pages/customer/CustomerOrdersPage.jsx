@@ -1,20 +1,13 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-// import { useApp } from '../../context/AppContext'; // This will be used later
+import React, { useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { useApp } from '../../context/AppContext';
 
 const CustomerOrdersPage = () => {
-    // const { user, quotations } = useApp(); // This will be replaced by context
-    const user = { email: 'adam@example.com' }; // Placeholder
-    const navigate = useNavigate();
+    const { user, customerQuotations, fetchMyQuotations } = useApp();
     
-    // Placeholder data until context is fully wired
-    const quotations = [
-        { id: 'QUO-12345', orderDate: '2025-08-12', total: 157.50, status: 'Quotation Sent', customer: { email: 'adam@example.com' } },
-        { id: 'QUO-67890', orderDate: '2025-08-11', total: 262.50, status: 'Reserved', customer: { email: 'adam@example.com' } },
-        { id: 'QUO-11223', orderDate: '2025-08-10', total: 84.00, status: 'Payment Request', customer: { email: 'adam@example.com' } },
-    ];
-
-    const myQuotations = quotations.filter(q => q.customer.email === user.email);
+    useEffect(() => {
+        fetchMyQuotations();
+    }, []);
 
     const StatusBadge = ({ status }) => {
         const statusMap = {
@@ -44,23 +37,23 @@ const CustomerOrdersPage = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {myQuotations.length === 0 ? (
+                        {(!customerQuotations || customerQuotations.length === 0) ? (
                             <tr>
                                 <td colSpan="5" className="text-center p-8 text-gray-400">
                                     You have no orders or quotations yet.
                                 </td>
                             </tr>
                         ) : (
-                            myQuotations.map(q => (
-                                <tr key={q.id} className="border-b border-gray-700">
-                                    <td className="p-4 font-mono">{q.id}</td>
-                                    <td>{q.orderDate}</td>
-                                    <td>₹{q.total.toFixed(2)}</td>
+                            customerQuotations.map(q => (
+                                <tr key={q._id} className="border-b border-gray-700">
+                                    <td className="p-4 font-mono">{q._id}</td>
+                                    <td>{new Date(q.createdAt).toLocaleDateString()}</td>
+                                    <td>₹{(q.total || 0).toFixed(2)}</td>
                                     <td><StatusBadge status={q.status} /></td>
                                     <td className="p-4">
-                                        <Link to={`/quotation/${q.id}`} className="text-indigo-400 hover:underline font-semibold">View</Link>
+                                        <Link to={`/quotation/${q._id}`} className="text-indigo-400 hover:underline font-semibold">View</Link>
                                         {q.status === 'Payment Request' && (
-                                            <Link to={`/payment/${q.id}`} className="ml-4 bg-green-600 px-3 py-1 rounded-md text-sm hover:bg-green-500 transition-colors">
+                                            <Link to={`/payment/${q._id}`} className="ml-4 bg-green-600 px-3 py-1 rounded-md text-sm hover:bg-green-500 transition-colors">
                                                 Pay Now
                                             </Link>
                                         )}

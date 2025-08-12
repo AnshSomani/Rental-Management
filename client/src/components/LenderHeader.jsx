@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { HomeIcon, UserIcon, ChevronDownIcon } from '../assets/icons.jsx';
-// import { useApp } from '../context/AppContext'; // This will be used later
+import { useApp } from '../context/AppContext';
 
 const LenderHeader = () => {
-    // const { user, logout } = useApp(); // This will be replaced by context
-    const user = { name: 'Lender Pro' }; // Placeholder for now
+    const { user, logout } = useApp();
     const navigate = useNavigate();
     const location = useLocation();
     const [showProfileDropdown, setShowProfileDropdown] = useState(false);
 
     const handleLogout = () => {
-        // logout(); // This will be enabled later
+        logout();
         navigate('/login');
     };
     

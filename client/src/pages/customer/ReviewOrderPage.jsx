@@ -2,18 +2,13 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Trash2Icon } from '../../assets/icons.jsx';
 import QuantityInput from '../../components/QuantityInput.jsx';
-// import { useApp } from '../../context/AppContext'; // This will be used later
+import { useApp } from '../../context/AppContext';
 
 const ReviewOrderPage = () => {
-    // const { user, cart, updateCartQuantity, removeFromCart, requestQuotation } = useApp(); // To be used later
+    const { cart, updateCartQuantity, removeFromCart, requestQuotation } = useApp();
     const navigate = useNavigate();
     const [deliveryMethod, setDeliveryMethod] = useState('pickup');
 
-    // Placeholder data until context is fully wired
-    const cart = [
-        { product: { id: '1', name: 'Professional DSLR Camera', priceList: { day: 150 }, imageUrl: 'https://images.unsplash.com/photo-1519638831568-d9897f54ed69?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=600', pickupAddress: '123 Tech Lane, Silicon Valley, CA' }, quantity: 1 },
-    ];
-    
     if (cart.length === 0) {
         return (
             <div className="p-8 text-center text-white">
@@ -23,15 +18,41 @@ const ReviewOrderPage = () => {
         );
     }
 
-    const subtotal = cart.reduce((sum, item) => sum + item.product.priceList.day * item.quantity, 0);
-    const taxes = subtotal * 0.05; // Assuming 5% tax
+    const subtotal = cart.reduce((sum, item) => sum + (item.product.priceList?.day || 0) * item.quantity, 0);
+    const taxes = subtotal * 0.05;
     const deliveryCharge = deliveryMethod === 'delivery' ? 50 : 0;
     const total = subtotal + taxes + deliveryCharge;
 
-    const handleRequestQuotation = (e) => {
+    const handleRequestQuotation = async (e) => {
         e.preventDefault();
-        // API call logic will go here
-        alert('Quotation requested!');
+        const formData = new FormData(e.currentTarget);
+        const rentalFrom = formData.get('rentalFrom');
+        const rentalTo = formData.get('rentalTo');
+        const deliveryAddress = formData.get('deliveryAddress') || undefined;
+        const invoiceAddress = formData.get('invoiceAddress');
+
+        const productsPayload = cart.map(item => ({
+            product: item.product._id || item.product.id,
+            quantity: item.quantity,
+            price: item.product.priceList?.day || 0,
+        }));
+
+        const totals = {
+            totalPrice: subtotal,
+            tax: taxes,
+            deliveryCharge,
+            finalAmount: total,
+        };
+
+        const delivery = {
+            deliveryMethod,
+            rentalPeriod: { from: rentalFrom, to: rentalTo },
+            deliveryAddress,
+            invoiceAddress,
+            pickupAddress: cart[0]?.product?.pickupAddress,
+        };
+
+        await requestQuotation({ productsPayload, totals, delivery });
         navigate('/my-orders');
     };
 
@@ -45,18 +66,18 @@ const ReviewOrderPage = () => {
                         <h2 className="text-2xl font-bold mb-4">1. Review Items</h2>
                         <div className="space-y-4">
                             {cart.map(item => (
-                                <div key={item.product.id} className="flex items-center gap-4 bg-gray-800 p-4 rounded-lg border border-gray-700">
+                                <div key={item.product._id || item.product.id} className="flex items-center gap-4 bg-gray-800 p-4 rounded-lg border border-gray-700">
                                     <img src={item.product.imageUrl} alt={item.product.name} className="w-24 h-24 object-cover rounded" />
                                     <div className="flex-grow">
                                         <h3 className="font-semibold">{item.product.name}</h3>
-                                        <p className="text-indigo-400 font-bold">₹{item.product.priceList.day}/day</p>
+                                        <p className="text-indigo-400 font-bold">₹{item.product.priceList?.day}/day</p>
                                     </div>
                                     <QuantityInput 
                                         quantity={item.quantity} 
-                                        onDecrease={() => alert('Decrease quantity')} 
-                                        onIncrease={() => alert('Increase quantity')} 
+                                        onDecrease={() => updateCartQuantity(item.product._id || item.product.id, Math.max(1, item.quantity - 1))} 
+                                        onIncrease={() => updateCartQuantity(item.product._id || item.product.id, item.quantity + 1)} 
                                     />
-                                    <button type="button" onClick={() => alert('Remove from cart')} className="p-2 text-gray-400 hover:text-red-500"><Trash2Icon /></button>
+                                    <button type="button" onClick={() => removeFromCart(item.product._id || item.product.id)} className="p-2 text-gray-400 hover:text-red-500"><Trash2Icon /></button>
                                 </div>
                             ))}
                         </div>
@@ -78,7 +99,7 @@ const ReviewOrderPage = () => {
                     </div>
 
                     {/* Step 3: Delivery & Addresses */}
-                     <div>
+                    <div>
                         <h2 className="text-2xl font-bold mb-4">3. Delivery Method & Addresses</h2>
                         <div className="bg-gray-800 p-6 rounded-lg border border-gray-700 space-y-4">
                             <div className="flex gap-6">
@@ -98,7 +119,7 @@ const ReviewOrderPage = () => {
                                 </>
                             )}
                         </div>
-                     </div>
+                    </div>
                 </div>
 
                 {/* Summary Section */}

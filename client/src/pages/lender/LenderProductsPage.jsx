@@ -1,20 +1,13 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-// import { useApp } from '../../context/AppContext'; // This will be used later
+import React, { useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { useApp } from '../../context/AppContext';
 
 const LenderProductsPage = () => {
-    const navigate = useNavigate();
-    // const { products, user } = useApp(); // This will be used later
+    const { myProducts, fetchMyProducts } = useApp();
 
-    // Placeholder data until context is fully wired
-    const products = [
-        { id: '1', name: 'Professional DSLR Camera', category: 'Electronics', priceList: { day: 150 } },
-        { id: '2', name: 'Camping Tent - 4 Person', category: 'Outdoor Gear', priceList: { day: 50 } },
-        { id: '3', name: 'Electric Mountain Bike', category: 'Sports Equipment', priceList: { day: 80 } },
-    ];
-    
-    // In a real app, you would filter products by the logged-in lender's ID
-    // const lenderProducts = products.filter(p => p.lender === user._id);
+    useEffect(() => {
+        fetchMyProducts();
+    }, []);
 
     return (
         <div className="p-8 text-white">
@@ -39,18 +32,18 @@ const LenderProductsPage = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {products.length === 0 ? (
+                        {(!myProducts || myProducts.length === 0) ? (
                             <tr>
                                 <td colSpan="5" className="text-center p-8 text-gray-400">
                                     You have not listed any products yet.
                                 </td>
                             </tr>
                         ) : (
-                            products.map(p => (
-                                <tr key={p.id} className="border-b border-gray-700 last:border-b-0">
+                            myProducts.map(p => (
+                                <tr key={p._id || p.id} className="border-b border-gray-700 last:border-b-0">
                                     <td className="p-4">{p.name}</td>
                                     <td>{p.category}</td>
-                                    <td>₹{p.priceList.day}</td>
+                                    <td>₹{p.priceList?.day}</td>
                                     <td>
                                         <span className="bg-green-900 text-green-300 px-2 py-1 rounded-full text-xs font-medium">
                                             Active

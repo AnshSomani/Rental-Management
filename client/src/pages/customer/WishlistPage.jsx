@@ -1,15 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import ProductCard from '../../components/ProductCard.jsx';
-// import { useApp } from '../../context/AppContext'; // This will be used later
+import { useApp } from '../../context/AppContext';
 
 const WishlistPage = () => {
-    // const { wishlist } = useApp(); // This will be replaced by context
-    
-    // Placeholder data until context is fully wired
-    const wishlist = [
-        { id: '3', name: 'Electric Mountain Bike', category: 'Sports Equipment', priceList: { day: 80 }, rating: 4.9, purchaseCount: 95, imageUrl: 'https://images.unsplash.com/photo-1575585252319-38ABC17c5147?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=600' },
-    ];
+    const { wishlist } = useApp();
 
     return (
         <div className="p-8">
@@ -24,7 +19,7 @@ const WishlistPage = () => {
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {wishlist.map(product => (
-                        <ProductCard key={product.id} product={product} />
+                        <ProductCard key={product._id || product.id} product={product} />
                     ))}
                 </div>
             )}

@@ -1,39 +1,35 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { SearchIcon } from '../../assets/icons.jsx';
 import useDebounce from '../../hooks/useDebounce.js';
-// import { useApp } from '../../context/AppContext'; // This will be used later
+import { useApp } from '../../context/AppContext';
 
 const LenderDashboardPage = () => {
-    // const { quotations } = useApp(); // This will be replaced by context
+    const { lenderQuotations, fetchLenderQuotations } = useApp();
     const [filter, setFilter] = useState('30days');
     const [searchTerm, setSearchTerm] = useState('');
     const debouncedSearchTerm = useDebounce(searchTerm, 300);
-    
-    // --- MOCK DATA UNTIL API IS CONNECTED ---
-    const quotations = [
-        { id: 'QUO-1', total: 157.50, status: 'Returned', orderDate: new Date().toISOString(), customer: { name: 'Adam' }, cart: [{ product: { name: 'DSLR Camera', category: 'Electronics' }, quantity: 1 }] },
-        { id: 'QUO-2', total: 262.50, status: 'Returned', orderDate: new Date(Date.now() - 40 * 24 * 60 * 60 * 1000).toISOString(), customer: { name: 'Jane Doe' }, cart: [{ product: { name: 'Camping Tent', category: 'Outdoor Gear' }, quantity: 2 }] },
-        { id: 'QUO-3', total: 84.00, status: 'PickedUp', orderDate: new Date().toISOString(), customer: { name: 'Adam' }, cart: [{ product: { name: 'E-Bike', category: 'Sports Equipment' }, quantity: 1 }] },
-    ];
-    // --- END MOCK DATA ---
+
+    useEffect(() => {
+        fetchLenderQuotations();
+    }, []);
 
     const filteredQuotations = useMemo(() => {
-        let data = quotations.filter(q => q.status === 'Returned'); // Only consider completed orders for revenue
+        let data = (lenderQuotations || []).filter(q => q.status === 'Returned');
         
         if (filter === '30days') {
             const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-            data = data.filter(q => new Date(q.orderDate) > thirtyDaysAgo);
+            data = data.filter(q => new Date(q.createdAt) > thirtyDaysAgo);
         }
 
         if (debouncedSearchTerm) {
-            data = data.filter(q => q.customer.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()));
+            data = data.filter(q => (q.customer?.name || '').toLowerCase().includes(debouncedSearchTerm.toLowerCase()));
         }
         return data;
-    }, [quotations, filter, debouncedSearchTerm]);
+    }, [lenderQuotations, filter, debouncedSearchTerm]);
 
     const dashboardData = useMemo(() => {
-        const totalRevenue = filteredQuotations.reduce((acc, q) => acc + q.total, 0);
-        const activeRentals = quotations.filter(q => q.status === 'PickedUp').length;
+        const totalRevenue = filteredQuotations.reduce((acc, q) => acc + (q.total || 0), 0);
+        const activeRentals = (lenderQuotations || []).filter(q => q.status === 'PickedUp').length;
         
         const topCategories = {};
         const topProducts = {};
@@ -41,20 +37,26 @@ const LenderDashboardPage = () => {
 
         filteredQuotations.forEach(q => {
             // Top Customers
-            topCustomers[q.customer.name] = topCustomers[q.customer.name] || { ordered: 0, revenue: 0 };
-            topCustomers[q.customer.name].ordered += 1;
-            topCustomers[q.customer.name].revenue += q.total;
+            const customerName = q.customer?.name || 'Unknown';
+            topCustomers[customerName] = topCustomers[customerName] || { ordered: 0, revenue: 0 };
+            topCustomers[customerName].ordered += 1;
+            topCustomers[customerName].revenue += (q.total || 0);
 
-            q.cart.forEach(item => {
+            (q.products || []).forEach(item => {
+                const category = item.product?.category || 'Other';
+                const productName = item.product?.name || 'Unknown';
+                const unitPrice = item.price || item.product?.priceList?.day || 0;
+                const lineRevenue = (item.quantity || 0) * unitPrice;
+
                 // Top Categories
-                topCategories[item.product.category] = topCategories[item.product.category] || { ordered: 0, revenue: 0 };
-                topCategories[item.product.category].ordered += item.quantity;
-                topCategories[item.product.category].revenue += item.quantity * item.product.price;
+                topCategories[category] = topCategories[category] || { ordered: 0, revenue: 0 };
+                topCategories[category].ordered += (item.quantity || 0);
+                topCategories[category].revenue += lineRevenue;
 
                 // Top Products
-                topProducts[item.product.name] = topProducts[item.product.name] || { ordered: 0, revenue: 0 };
-                topProducts[item.product.name].ordered += item.quantity;
-                topProducts[item.product.name].revenue += item.quantity * item.product.price;
+                topProducts[productName] = topProducts[productName] || { ordered: 0, revenue: 0 };
+                topProducts[productName].ordered += (item.quantity || 0);
+                topProducts[productName].revenue += lineRevenue;
             });
         });
 
@@ -63,12 +65,12 @@ const LenderDashboardPage = () => {
         return {
             totalRevenue,
             activeRentals,
-            totalQuotations: quotations.length,
+            totalQuotations: (lenderQuotations || []).length,
             topCategories: formatAndSort(topCategories),
             topProducts: formatAndSort(topProducts),
             topCustomers: formatAndSort(topCustomers),
         }
-    }, [filteredQuotations, quotations]);
+    }, [filteredQuotations, lenderQuotations]);
 
 
     return (
