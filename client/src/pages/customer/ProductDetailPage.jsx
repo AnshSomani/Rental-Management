@@ -45,8 +45,8 @@ const ProductDetailPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                 <div>
                     <img 
-                        src={product.imageUrl} 
-                        alt={product.name} 
+                        src={product.imageUrl || 'https://placehold.co/600x400/111827/7C8B9A?text=No+Image'} 
+                        alt={product.name || 'Product'} 
                         className="w-full h-auto object-cover rounded-lg shadow-lg mb-6"
                         onError={(e) => { e.target.onerror = null; e.target.src='https://placehold.co/600x400/111827/7C8B9A?text=No+Image'; }}
                     />
@@ -65,7 +65,7 @@ const ProductDetailPage = () => {
                         <span className="text-lg">{product.rating || 4.5} ({product.purchaseCount || 0} rentals)</span>
                     </div>
                     <p className="text-3xl font-bold mb-4">
-                        ₹{product.priceList.day} <span className="text-lg font-normal text-gray-400">/ per day</span>
+                        ₹{(product.priceList?.day ?? 0)} <span className="text-lg font-normal text-gray-400">/ per day</span>
                     </p>
                     <div className="grid grid-cols-2 gap-4 mb-4">
                         <div>

@@ -9,13 +9,13 @@ const ProductListItem = ({ product }) => {
     return (
         <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 flex flex-col sm:flex-row items-center justify-between w-full gap-4">
             <div className="flex items-center gap-4 w-full sm:w-1/2">
-                <img src={product.imageUrl} alt={product.name} className="w-24 h-24 object-cover rounded-md" />
+                <img src={product.imageUrl || 'https://placehold.co/600x400/111827/7C8B9A?text=No+Image'} alt={product.name || 'Product'} className="w-24 h-24 object-cover rounded-md" />
                 <div>
                     <h3 className="text-lg font-semibold text-white mb-1">{product.name}</h3>
                     <p className="text-gray-400 text-sm">{product.category}</p>
                 </div>
             </div>
-            <p className="text-xl font-bold text-indigo-400">₹{product.priceList.day}<span className="text-sm font-normal text-gray-400">/day</span></p>
+            <p className="text-xl font-bold text-indigo-400">₹{(product.priceList?.day ?? 0)}<span className="text-sm font-normal text-gray-400">/day</span></p>
             <div className="flex items-center gap-4">
                 <button onClick={() => alert(`Use the product card to add to cart`)} className="bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-500 transition-colors">Add to Cart</button>
             </div>
