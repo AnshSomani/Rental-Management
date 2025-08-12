@@ -1,23 +1,48 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Navbar } from '../components/layout/Navbar';
 import { ProductCard } from '../components/rentals/ProductCard';
 import { Search, SlidersHorizontal, ArrowRight } from 'lucide-react';
 import '../styles/HomePage.css';
-// Placeholder data
-const featuredProducts = [
-  { id: 1, name: 'Pro Camera Lens', price: 45.00, category: 'Electronics', imageUrl: 'https://placehold.co/400x400/1e293b/94a3b8?text=Lens' },
-  { id: 2, name: 'Mountain Bike', price: 75.00, category: 'Sports', imageUrl: 'https://placehold.co/400x400/1e293b/94a3b8?text=Bike' },
-  { id: 3, name: 'Camping Tent', price: 35.00, category: 'Outdoors', imageUrl: 'https://placehold.co/400x400/1e293b/94a3b8?text=Tent' },
-  { id: 4, name: 'Electric Drill', price: 25.00, category: 'Tools', imageUrl: 'https://placehold.co/400x400/1e293b/94a3b8?text=Drill' },
-];
-const allProducts = [...featuredProducts, { id: 5, name: 'Projector', price: 50.00, category: 'Electronics', imageUrl: 'https://placehold.co/400x400/1e293b/94a3b8?text=Projector' }];
-const categories = ['Electronics', 'Sports', 'Outdoors', 'Tools', 'Events', 'Garden'];
+import { useAuth } from '../context/AuthContext';
+
+interface ProductDto {
+  id: string;
+  name: string;
+  price: number;
+  category: string;
+  imageUrl: string;
+  description: string;
+}
 
 export const HomePage: React.FC = () => {
+  const { api } = useAuth();
+  const [products, setProducts] = useState<ProductDto[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true);
+      try {
+        const { data } = await api.get('/products');
+        setProducts(data);
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, [api]);
+
+  const categories = useMemo(() => {
+    const set = new Set<string>();
+    products.forEach((p) => set.add(p.category));
+    return Array.from(set);
+  }, [products]);
+
+  const featured = products.slice(0, 4);
+
   return (
     <div className="homepage-container">
       <Navbar />
-      
       <section className="hero-section">
         <h1 className="hero-title">Rent Anything, Anytime</h1>
         <p className="hero-subtitle">From party equipment to professional tools, find what you need from lenders in your community.</p>
@@ -32,7 +57,8 @@ export const HomePage: React.FC = () => {
       <section className="content-section">
         <h2 className="section-title">Featured Items</h2>
         <div className="product-grid">
-          {featuredProducts.map((product) => <ProductCard key={product.id} product={product} />)}
+          {loading && <p>Loading...</p>}
+          {!loading && featured.map((product) => <ProductCard key={product.id} product={product as any} />)}
         </div>
       </section>
 
@@ -55,13 +81,13 @@ export const HomePage: React.FC = () => {
                 </aside>
                 <div className="main-grid-container">
                     <div className="results-header">
-                        <p className="results-text">Showing <span>{allProducts.length}</span> results</p>
+                        <p className="results-text">Showing <span>{products.length}</span> results</p>
                         <select className="custom-select" style={{width: 'auto'}}>
-                            <option>Sort by: Popularity</option>
+                            <option>Sort by: Newest</option>
                         </select>
                     </div>
                     <div className="product-grid" style={{gridTemplateColumns: 'repeat(3, 1fr)'}}>
-                        {allProducts.map((product) => <ProductCard key={product.id} product={product} />)}
+                        {products.map((product) => <ProductCard key={product.id} product={product as any} />)}
                     </div>
                 </div>
             </div>

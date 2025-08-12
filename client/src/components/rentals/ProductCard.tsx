@@ -1,13 +1,14 @@
 import React from 'react';
 import { Star } from 'lucide-react';
 import './ProductCard.css'; // Import the new CSS file
+import { Link } from 'react-router-dom';
 
 interface Product {
-  id: number;
+  id: string | number;
   name: string;
   price: number;
   category: string;
-  imageUrl: string;
+  imageUrl?: string;
 }
 
 interface ProductCardProps {
@@ -15,11 +16,12 @@ interface ProductCardProps {
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+  const imageSrc = product.imageUrl || 'https://placehold.co/400x400/1e293b/94a3b8?text=No+Image';
   return (
-    <div className="product-card">
+    <Link to={`/product/${product.id}`} className="product-card" style={{ textDecoration: 'none' }}>
       <div className="product-card-image-container">
         <img
-          src={product.imageUrl}
+          src={imageSrc}
           alt={product.name}
           className="product-card-image"
           onError={(e) => { e.currentTarget.src = 'https://placehold.co/400x400/1e293b/94a3b8?text=Image+Error'; }}
@@ -47,6 +49,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           Rent Now
         </button>
       </div>
-    </div>
+    </Link>
   );
 };

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { ShoppingBag } from 'lucide-react';
 import '../styles/Auth.css';
+import { useAuth } from '../context/AuthContext';
 
 export const RegisterPage: React.FC = () => {
   const [fullName, setFullName] = useState('');
@@ -13,6 +13,7 @@ export const RegisterPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+  const { api } = useAuth();
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -25,19 +26,8 @@ export const RegisterPage: React.FC = () => {
     setError('');
 
     try {
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      };
+      const { data } = await api.post('/auth/register', { fullName, email, password });
 
-      const { data } = await axios.post(
-        'http://localhost:5001/api/auth/register',
-        { fullName, email, password },
-        config
-      );
-
-      console.log('Registration successful:', data);
       setLoading(false);
       navigate('/');
 

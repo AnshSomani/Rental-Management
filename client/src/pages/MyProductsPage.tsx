@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingBag, LayoutDashboard, Package, Wallet, Settings, LogOut, PlusCircle, Edit, Trash2 } from 'lucide-react';
 import '../styles/Dashboard.css';
 import '../styles/MyProductsPage.css';
+import { useAuth } from '../context/AuthContext';
 
 // --- Reusable Lender Sidebar ---
 const LenderSidebar: React.FC = () => (
@@ -40,13 +41,16 @@ const LenderSidebar: React.FC = () => (
 
 // --- Main MyProductsPage Component ---
 export const MyProductsPage: React.FC = () => {
-  // Placeholder data for the lender's products
-  const myProducts = [
-    { id: 1, name: 'Pro Camera Lens', price: 45.00, status: 'Available', totalRentals: 12, imageUrl: 'https://placehold.co/100x100/1e293b/94a3b8?text=Lens' },
-    { id: 2, name: 'Mountain Bike', price: 75.00, status: 'Rented Out', totalRentals: 8, imageUrl: 'https://placehold.co/100x100/1e293b/94a3b8?text=Bike' },
-    { id: 3, name: 'Camping Tent', price: 35.00, status: 'Available', totalRentals: 25, imageUrl: 'https://placehold.co/100x100/1e293b/94a3b8?text=Tent' },
-    { id: 4, name: 'Electric Drill', price: 25.00, status: 'Available', totalRentals: 15, imageUrl: 'https://placehold.co/100x100/1e293b/94a3b8?text=Drill' },
-  ];
+  const { api } = useAuth();
+  const [myProducts, setMyProducts] = useState<any[]>([]);
+
+  useEffect(() => {
+    const load = async () => {
+      const { data } = await api.get('/products/mine');
+      setMyProducts(data);
+    };
+    load();
+  }, [api]);
 
   return (
     <div className="dashboard-layout">
@@ -66,7 +70,6 @@ export const MyProductsPage: React.FC = () => {
               <tr>
                 <th>Product</th>
                 <th>Price/Day</th>
-                <th>Total Rentals</th>
                 <th>Status</th>
                 <th>Actions</th>
               </tr>
@@ -75,14 +78,13 @@ export const MyProductsPage: React.FC = () => {
               {myProducts.map(product => (
                 <tr key={product.id}>
                   <td style={{display: 'flex', alignItems: 'center', gap: '1rem'}}>
-                    <img src={product.imageUrl} alt={product.name} className="product-list-table-img"/>
+                    <img src={product.imageUrl || 'https://placehold.co/100x100/1e293b/94a3b8?text=Img'} alt={product.name} className="product-list-table-img"/>
                     <span className="product-list-item-name">{product.name}</span>
                   </td>
                   <td>${product.price.toFixed(2)}</td>
-                  <td>{product.totalRentals}</td>
                   <td>
                     <label className="toggle-switch">
-                      <input type="checkbox" defaultChecked={product.status === 'Available'} />
+                      <input type="checkbox" defaultChecked={product.availability} />
                       <span className="toggle-slider"></span>
                     </label>
                   </td>
