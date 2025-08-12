@@ -90,7 +90,15 @@ export const AppProvider = ({ children }) => {
     const fetchProducts = async () => {
         try {
             const { data } = await axios.get('/api/products');
-            setProducts(data);
+            const normalized = (data || []).map((p) => {
+                const fallbackPrice = typeof p.price === 'number' ? p.price : 0;
+                const priceList = p.priceList && typeof p.priceList.day === 'number'
+                    ? p.priceList
+                    : { day: fallbackPrice, week: fallbackPrice ? fallbackPrice * 6 : 0, month: fallbackPrice ? fallbackPrice * 20 : 0 };
+                const imageUrl = p.imageUrl || p.image || '';
+                return { ...p, priceList, imageUrl };
+            });
+            setProducts(normalized);
         } catch (err) {
             setError(err.response?.data?.message || 'Could not fetch products');
         }
@@ -98,7 +106,13 @@ export const AppProvider = ({ children }) => {
 
     const fetchProductById = async (id) => {
         const { data } = await axios.get(`/api/products/${id}`);
-        return data;
+        const p = data || {};
+        const fallbackPrice = typeof p.price === 'number' ? p.price : 0;
+        const priceList = p.priceList && typeof p.priceList.day === 'number'
+            ? p.priceList
+            : { day: fallbackPrice, week: fallbackPrice ? fallbackPrice * 6 : 0, month: fallbackPrice ? fallbackPrice * 20 : 0 };
+        const imageUrl = p.imageUrl || p.image || '';
+        return { ...p, priceList, imageUrl };
     };
 
     const fetchMyProducts = async () => {
