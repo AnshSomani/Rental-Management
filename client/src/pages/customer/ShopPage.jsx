@@ -11,8 +11,8 @@ const ProductListItem = ({ product }) => {
             <div className="flex items-center gap-4 w-full sm:w-1/2">
                 <img src={product.imageUrl || 'https://placehold.co/600x400/111827/7C8B9A?text=No+Image'} alt={product.name || 'Product'} className="w-24 h-24 object-cover rounded-md" />
                 <div>
-                    <h3 className="text-lg font-semibold text-white mb-1">{product.name}</h3>
-                    <p className="text-gray-400 text-sm">{product.category}</p>
+                    <h3 className="text-lg font-semibold text-white mb-1">{product.name || 'Unnamed Product'}</h3>
+                    <p className="text-gray-400 text-sm">{product.category || 'Other'}</p>
                 </div>
             </div>
             <p className="text-xl font-bold text-indigo-400">₹{(product.priceList?.day ?? 0)}<span className="text-sm font-normal text-gray-400">/day</span></p>
@@ -25,7 +25,8 @@ const ProductListItem = ({ product }) => {
 
 
 const ShopPage = () => {
-    const { products, loading, fetchProducts } = useApp();
+    const { products, fetchProducts } = useApp();
+    const [isLoading, setIsLoading] = useState(false);
     
     const categories = ['All', 'Electronics', 'Outdoor Gear', 'Sports Equipment', 'Tools'];
 
@@ -40,23 +41,32 @@ const ShopPage = () => {
     const productsPerPage = viewMode === 'grid' ? 6 : 4;
 
     useEffect(() => {
-        fetchProducts();
+        let isMounted = true;
+        (async () => {
+            try {
+                setIsLoading(true);
+                await fetchProducts();
+            } finally {
+                if (isMounted) setIsLoading(false);
+            }
+        })();
+        return () => { isMounted = false; };
     }, []);
 
     const filteredAndSortedProducts = useMemo(() => {
-        let filtered = products;
+        let filtered = products || [];
         if (selectedCategory !== 'All') {
             filtered = filtered.filter(p => p.category === selectedCategory);
         }
         if (debouncedSearchQuery) {
-            filtered = filtered.filter(p => p.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase()));
+            filtered = filtered.filter(p => (p.name || '').toLowerCase().includes(debouncedSearchQuery.toLowerCase()));
         }
         return [...filtered].sort((a, b) => {
             switch (sortOption) {
                 case 'rating': return (b.rating || 0) - (a.rating || 0);
                 case 'purchases': return (b.purchaseCount || 0) - (a.purchaseCount || 0);
-                case 'price-lh': return a.priceList.day - b.priceList.day;
-                case 'price-hl': return b.priceList.day - a.priceList.day;
+                case 'price-lh': return (a.priceList?.day ?? 0) - (b.priceList?.day ?? 0);
+                case 'price-hl': return (b.priceList?.day ?? 0) - (a.priceList?.day ?? 0);
                 default: return 0;
             }
         });
@@ -109,7 +119,7 @@ const ShopPage = () => {
                         </div>
                     </div>
 
-                    {loading ? (
+                    {isLoading ? (
                         <div className="text-center text-gray-400">Loading products...</div>
                     ) : viewMode === 'grid' ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

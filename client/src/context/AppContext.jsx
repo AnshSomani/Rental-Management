@@ -28,7 +28,7 @@ export const AppProvider = ({ children }) => {
     const [wishlist, setWishlist] = useState([]);
     const [customerQuotations, setCustomerQuotations] = useState([]);
     const [lenderQuotations, setLenderQuotations] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [isAppReady, setIsAppReady] = useState(false);
     const [error, setError] = useState(null);
 
     // --- EFFECTS ---
@@ -40,7 +40,7 @@ export const AppProvider = ({ children }) => {
             setUser(parsed);
             setAxiosAuthHeader(parsed.token);
         }
-        setLoading(false);
+        setIsAppReady(true);
     }, []);
 
     // --- API FUNCTIONS ---
@@ -89,13 +89,10 @@ export const AppProvider = ({ children }) => {
     // Fetch all products
     const fetchProducts = async () => {
         try {
-            setLoading(true);
             const { data } = await axios.get('/api/products');
             setProducts(data);
-            setLoading(false);
         } catch (err) {
             setError(err.response?.data?.message || 'Could not fetch products');
-            setLoading(false);
         }
     };
 
@@ -131,9 +128,6 @@ export const AppProvider = ({ children }) => {
     };
 
     const requestQuotation = async ({ productsPayload, totals, delivery }) => {
-        // productsPayload: [{ product: productId, quantity, price }]
-        // totals: { totalPrice, tax, deliveryCharge, finalAmount }
-        // delivery: { deliveryMethod, rentalPeriod, deliveryAddress, invoiceAddress, pickupAddress }
         const { data } = await axios.post('/api/quotations', {
             products: productsPayload,
             ...totals,
@@ -190,7 +184,7 @@ export const AppProvider = ({ children }) => {
         wishlist,
         customerQuotations,
         lenderQuotations,
-        loading,
+        appReady: isAppReady,
         error,
         login,
         logout,
@@ -212,7 +206,7 @@ export const AppProvider = ({ children }) => {
 
     return (
         <AppContext.Provider value={value}>
-            {!loading && children}
+            {isAppReady && children}
         </AppContext.Provider>
     );
 };
