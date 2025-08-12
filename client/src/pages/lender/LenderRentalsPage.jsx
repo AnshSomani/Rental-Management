@@ -1,19 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-// import { useApp } from '../../context/AppContext'; // This will be used later
+import { useApp } from '../../context/AppContext';
 
 const LenderRentalsPage = () => {
-    // const { quotations } = useApp(); // This will be replaced by context
-    
-    // Placeholder data until context is fully wired
-    const quotations = [
-        { id: 'QUO-12345', orderDate: '2025-08-12', total: 157.50, status: 'Pending', customer: { name: 'Adam' } },
-        { id: 'QUO-67890', orderDate: '2025-08-11', total: 262.50, status: 'Reserved', customer: { name: 'Jane Doe' } },
-        { id: 'QUO-11223', orderDate: '2025-08-10', total: 84.00, status: 'Payment Request', customer: { name: 'Adam' } },
-        { id: 'QUO-45678', orderDate: '2025-08-09', total: 525.00, status: 'PickedUp', customer: { name: 'John Smith' } },
-    ];
+    const { lenderQuotations, fetchLenderQuotations } = useApp();
 
-    const activeQuotations = quotations.filter(q => q.status !== 'Returned');
+    useEffect(() => {
+        fetchLenderQuotations();
+    }, []);
+
+    const activeQuotations = (lenderQuotations || []).filter(q => q.status !== 'Returned');
 
     const StatusBadge = ({ status }) => {
         const colors = {
@@ -50,14 +46,14 @@ const LenderRentalsPage = () => {
                             </tr>
                         ) : (
                             activeQuotations.map(q => (
-                                <tr key={q.id} className="border-b border-gray-700 last:border-b-0">
-                                    <td className="p-4 font-mono">{q.id}</td>
-                                    <td>{q.customer.name}</td>
-                                    <td>{q.orderDate}</td>
-                                    <td>₹{q.total.toFixed(2)}</td>
+                                <tr key={q._id} className="border-b border-gray-700 last:border-b-0">
+                                    <td className="p-4 font-mono">{q._id}</td>
+                                    <td>{q.customer?.name || '-'}</td>
+                                    <td>{new Date(q.createdAt).toLocaleDateString()}</td>
+                                    <td>₹{(q.total || 0).toFixed(2)}</td>
                                     <td><StatusBadge status={q.status} /></td>
                                     <td className="p-4">
-                                        <Link to={`/quotation/${q.id}`} className="text-indigo-400 hover:underline font-semibold">
+                                        <Link to={`/quotation/${q._id}`} className="text-indigo-400 hover:underline font-semibold">
                                             View
                                         </Link>
                                     </td>

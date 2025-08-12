@@ -6,30 +6,34 @@ import Product from '../models/productModel.js';
 // @access  Private
 const addQuotationItems = async (req, res) => {
     try {
-        const { items, totalPrice, tax, deliveryCharge, finalAmount } = req.body;
+        const { products, totalPrice, tax, deliveryCharge, finalAmount, deliveryMethod, rentalPeriod, deliveryAddress, invoiceAddress, pickupAddress } = req.body;
 
-        if (!items || items.length === 0) {
-            return res.status(400).json({ message: 'No quotation items' });
+        if (!products || products.length === 0) {
+            return res.status(400).json({ message: 'No quotation products' });
         }
 
-        // For this example, we'll assume all items in a single quotation
-        // belong to the same lender. We find the lender from the first product.
-        const firstProduct = await Product.findById(items[0].product);
+        if (!deliveryMethod || !rentalPeriod?.from || !rentalPeriod?.to || !invoiceAddress) {
+            return res.status(400).json({ message: 'Missing required fields' });
+        }
+
+        const firstProduct = await Product.findById(products[0].product);
         if (!firstProduct) {
             return res.status(404).json({ message: 'Product not found' });
         }
-        const lender = firstProduct.user;
+        const lender = firstProduct.lender;
 
         const quotation = new Quotation({
             customer: req.user._id,
             lender,
-            items,
-            totalPrice,
-            tax,
-            deliveryCharge,
-            finalAmount,
-            // Set an expiry date for the quotation, e.g., 3 days from now
-            expiryDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+            products,
+            total: finalAmount ?? totalPrice,
+            deliveryCharge: deliveryCharge || 0,
+            deliveryMethod,
+            rentalPeriod,
+            deliveryAddress,
+            invoiceAddress,
+            pickupAddress,
+            status: 'Pending',
         });
 
         const createdQuotation = await quotation.save();
@@ -47,7 +51,7 @@ const getMyQuotations = async (req, res) => {
     try {
         const quotations = await Quotation.find({ customer: req.user._id })
             .populate('lender', 'name')
-            .populate('items.product', 'name imageUrl');
+            .populate('products.product', 'name imageUrl priceList category');
         res.json(quotations);
     } catch (error) {
         res.status(500).json({ message: 'Server Error' });
@@ -61,8 +65,33 @@ const getLenderQuotations = async (req, res) => {
     try {
         const quotations = await Quotation.find({ lender: req.user._id })
             .populate('customer', 'name email')
-            .populate('items.product', 'name imageUrl');
+            .populate('products.product', 'name imageUrl priceList category');
         res.json(quotations);
+    } catch (error) {
+        res.status(500).json({ message: 'Server Error' });
+    }
+};
+
+// @desc    Get a single quotation by id (customer or lender can access)
+// @route   GET /api/quotations/:id
+// @access  Private
+const getQuotationById = async (req, res) => {
+    try {
+        const quotation = await Quotation.findById(req.params.id)
+            .populate('customer', 'name email phone')
+            .populate('lender', 'name email')
+            .populate('products.product', 'name imageUrl priceList category');
+
+        if (!quotation) {
+            return res.status(404).json({ message: 'Quotation not found' });
+        }
+
+        const userId = req.user._id.toString();
+        if (quotation.customer._id.toString() !== userId && quotation.lender._id.toString() !== userId) {
+            return res.status(401).json({ message: 'Not authorized to view this quotation' });
+        }
+
+        res.json(quotation);
     } catch (error) {
         res.status(500).json({ message: 'Server Error' });
     }
@@ -76,7 +105,6 @@ const updateQuotationStatus = async (req, res) => {
         const quotation = await Quotation.findById(req.params.id);
 
         if (quotation) {
-            // Security check: Ensure the user updating the status is the lender for this quotation
             if (quotation.lender.toString() !== req.user._id.toString()) {
                 return res.status(401).json({ message: 'Not authorized to update this quotation' });
             }
@@ -96,5 +124,6 @@ export {
     addQuotationItems,
     getMyQuotations,
     getLenderQuotations,
+    getQuotationById,
     updateQuotationStatus
 };

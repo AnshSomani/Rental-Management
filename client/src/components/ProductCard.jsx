@@ -1,26 +1,18 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { HeartIcon, StarIcon } from '../assets/icons.jsx';
-// import { useApp } from '../context/AppContext'; // This will be used later
+import { useApp } from '../context/AppContext';
 
 const ProductCard = ({ product }) => {
-    // const { user, addToCart, toggleWishlist, wishlist } = useApp();
-    // const isInWishlist = user ? wishlist.some(p => p.id === product.id) : false;
+    const { addToCart, addToWishlist } = useApp();
 
     const handleAction = (action) => {
-        // This is a placeholder. In the full app, we'll check if the user is logged in.
-        // if (!user) {
-        //     alert("Please log in to perform this action.");
-        //     navigate('/login');
-        // } else {
-        //     action();
-        // }
         action();
     };
 
     return (
         <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 flex flex-col justify-between text-white shadow-lg hover:shadow-indigo-500/20 transition-shadow duration-300">
-            <Link to={`/product/${product.id}`}>
+            <Link to={`/product/${product._id || product.id}`}>
                 <img 
                     src={product.imageUrl} 
                     alt={product.name} 
@@ -41,13 +33,13 @@ const ProductCard = ({ product }) => {
             </div>
             <div className="flex items-center justify-between">
                 <button 
-                    onClick={() => handleAction(() => alert(`Added ${product.name} to cart`))} 
+                    onClick={() => handleAction(() => addToCart(product))} 
                     className="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm hover:bg-indigo-500 transition-colors"
                 >
                     Add to Cart
                 </button>
                 <button 
-                    onClick={() => handleAction(() => alert(`Toggled ${product.name} in wishlist`))} 
+                    onClick={() => handleAction(() => addToWishlist(product))} 
                     className={`p-2 rounded-full hover:bg-gray-700`}
                 >
                     <HeartIcon filled={false} />

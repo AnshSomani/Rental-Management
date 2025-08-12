@@ -1,8 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import ProductCard from '../../components/ProductCard.jsx';
 import { GridIcon, ListIcon, SearchIcon } from '../../assets/icons.jsx';
 import useDebounce from '../../hooks/useDebounce.js';
-// import { useApp } from '../../context/AppContext'; // This will be used later
+import { useApp } from '../../context/AppContext';
 
 // A new component for the list view item, can be moved to its own file if preferred
 const ProductListItem = ({ product }) => {
@@ -17,7 +17,7 @@ const ProductListItem = ({ product }) => {
             </div>
             <p className="text-xl font-bold text-indigo-400">₹{product.priceList.day}<span className="text-sm font-normal text-gray-400">/day</span></p>
             <div className="flex items-center gap-4">
-                <button onClick={() => alert(`Added ${product.name} to cart`)} className="bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-500 transition-colors">Add to Cart</button>
+                <button onClick={() => alert(`Use the product card to add to cart`)} className="bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-500 transition-colors">Add to Cart</button>
             </div>
         </div>
     );
@@ -25,14 +25,8 @@ const ProductListItem = ({ product }) => {
 
 
 const ShopPage = () => {
-    // const { products, loading, error } = useApp(); // This will be replaced by context
+    const { products, loading, fetchProducts } = useApp();
     
-    // Placeholder data until context is fully wired
-    const products = [
-        { id: '1', name: 'Professional DSLR Camera', category: 'Electronics', priceList: { day: 150 }, rating: 4.8, purchaseCount: 120, imageUrl: 'https://images.unsplash.com/photo-1519638831568-d9897f54ed69?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=600' },
-        { id: '2', name: 'Camping Tent - 4 Person', category: 'Outdoor Gear', priceList: { day: 50 }, rating: 4.5, purchaseCount: 250, imageUrl: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=600' },
-        { id: '3', name: 'Electric Mountain Bike', category: 'Sports Equipment', priceList: { day: 80 }, rating: 4.9, purchaseCount: 95, imageUrl: 'https://images.unsplash.com/photo-1575585252319-38ABC17c5147?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=600' },
-    ];
     const categories = ['All', 'Electronics', 'Outdoor Gear', 'Sports Equipment', 'Tools'];
 
 
@@ -45,6 +39,10 @@ const ShopPage = () => {
     const debouncedSearchQuery = useDebounce(searchQuery, 300);
     const productsPerPage = viewMode === 'grid' ? 6 : 4;
 
+    useEffect(() => {
+        fetchProducts();
+    }, []);
+
     const filteredAndSortedProducts = useMemo(() => {
         let filtered = products;
         if (selectedCategory !== 'All') {
@@ -55,8 +53,8 @@ const ShopPage = () => {
         }
         return [...filtered].sort((a, b) => {
             switch (sortOption) {
-                case 'rating': return b.rating - a.rating;
-                case 'purchases': return b.purchaseCount - a.purchaseCount;
+                case 'rating': return (b.rating || 0) - (a.rating || 0);
+                case 'purchases': return (b.purchaseCount || 0) - (a.purchaseCount || 0);
                 case 'price-lh': return a.priceList.day - b.priceList.day;
                 case 'price-hl': return b.priceList.day - a.priceList.day;
                 default: return 0;
@@ -64,7 +62,7 @@ const ShopPage = () => {
         });
     }, [debouncedSearchQuery, sortOption, selectedCategory, products]);
     
-    const totalPages = Math.ceil(filteredAndSortedProducts.length / productsPerPage);
+    const totalPages = Math.ceil(filteredAndSortedProducts.length / productsPerPage) || 1;
     const paginatedProducts = filteredAndSortedProducts.slice((currentPage - 1) * productsPerPage, currentPage * productsPerPage);
 
     return (
@@ -111,13 +109,15 @@ const ShopPage = () => {
                         </div>
                     </div>
 
-                    {viewMode === 'grid' ? (
+                    {loading ? (
+                        <div className="text-center text-gray-400">Loading products...</div>
+                    ) : viewMode === 'grid' ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {paginatedProducts.map(p => <ProductCard key={p.id} product={p} />)}
+                            {paginatedProducts.map(p => <ProductCard key={p._id || p.id} product={p} />)}
                         </div>
                     ) : (
                         <div className="flex flex-col gap-4">
-                            {paginatedProducts.map(p => <ProductListItem key={p.id} product={p} />)}
+                            {paginatedProducts.map(p => <ProductListItem key={p._id || p.id} product={p} />)}
                         </div>
                     )}
                     
