@@ -1,61 +1,68 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { Navbar } from '../components/layout/Navbar';
 import { ProductCard } from '../components/rentals/ProductCard';
-import { Star, Calendar } from 'lucide-react';
+import { Star } from 'lucide-react';
 import '../styles/ProductDetailPage.css';
+import { useAuth } from '../context/AuthContext';
 
-// --- Placeholder Data ---
-const product = {
-  id: 1,
-  name: 'Pro Camera Lens - 24-70mm f/2.8',
-  category: 'Electronics',
-  description: 'A versatile, high-performance zoom lens, perfect for professional photography and videography. Captures stunningly sharp images with beautiful bokeh. Ideal for events, portraits, and landscape shots.',
-  price: 45.00,
-  rating: 4.9,
-  reviews: 124,
-  lender: {
-    name: 'Adam Smith',
-    avatarUrl: 'https://placehold.co/100x100/4f46e5/ffffff?text=A',
-    rating: 4.8,
-  },
-  images: [
-    'https://placehold.co/800x600/1e293b/94a3b8?text=Main+View',
-    'https://placehold.co/400x400/1e293b/94a3b8?text=Side+View',
-    'https://placehold.co/400x400/1e293b/94a3b8?text=Angled+View',
-    'https://placehold.co/400x400/1e293b/94a3b8?text=In+Use',
-  ]
-};
+interface ProductDto {
+  id: string;
+  name: string;
+  category: string;
+  description: string;
+  price: number;
+  imageUrl?: string;
+}
 
-const relatedProducts = [
-  { id: 2, name: 'Mountain Bike', price: 75.00, category: 'Sports', imageUrl: 'https://placehold.co/400x400/1e293b/94a3b8?text=Bike' },
-  { id: 3, name: 'Camping Tent', price: 35.00, category: 'Outdoors', imageUrl: 'https://placehold.co/400x400/1e293b/94a3b8?text=Tent' },
-  { id: 4, name: 'Electric Drill', price: 25.00, category: 'Tools', imageUrl: 'https://placehold.co/400x400/1e293b/94a3b8?text=Drill' },
-];
-
-
-// --- Main Product Detail Page Component ---
 export const ProductDetailPage: React.FC = () => {
-  const [activeImage, setActiveImage] = useState(product.images[0]);
+  const { id } = useParams<{ id: string }>();
+  const { api } = useAuth();
+  const [product, setProduct] = useState<ProductDto | null>(null);
+  const [all, setAll] = useState<ProductDto[]>([]);
+  const [activeImage, setActiveImage] = useState<string | null>(null);
+
+  useEffect(() => {
+    const load = async () => {
+      if (!id) return;
+      const [{ data: detail }, { data: list }] = await Promise.all([
+        api.get(`/products/${id}`),
+        api.get('/products'),
+      ]);
+      setProduct(detail);
+      setAll(list);
+      setActiveImage(detail.imageUrl || 'https://placehold.co/800x600/1e293b/94a3b8?text=Image');
+    };
+    load();
+  }, [api, id]);
+
+  const related = useMemo(() => all.filter((p) => p.id !== id).slice(0, 3), [all, id]);
+
+  if (!product) return (
+    <div className="product-detail-page">
+      <Navbar />
+      <div className="product-detail-container"><p>Loading...</p></div>
+    </div>
+  );
 
   return (
     <div className="product-detail-page">
       <Navbar />
       <div className="product-detail-container">
         <div className="product-grid-layout">
-          
           {/* Left Column: Image Gallery & Description */}
           <div className="image-gallery">
             <div className="main-image-container">
-              <img src={activeImage} alt={product.name} className="main-image" />
+              <img src={activeImage || ''} alt={product.name} className="main-image" />
             </div>
             <div className="thumbnail-grid">
-              {product.images.map((img, index) => (
-                <img 
+              {[product.imageUrl].filter(Boolean).map((img, index) => (
+                <img
                   key={index}
-                  src={img}
+                  src={img as string}
                   alt={`Thumbnail ${index + 1}`}
                   className={`thumbnail-image ${activeImage === img ? 'active' : ''}`}
-                  onClick={() => setActiveImage(img)}
+                  onClick={() => setActiveImage(img as string)}
                 />
               ))}
             </div>
@@ -69,8 +76,8 @@ export const ProductDetailPage: React.FC = () => {
               <h1 className="product-title">{product.name}</h1>
               <div className="product-rating">
                 <Star className="h-5 w-5 text-amber-400" fill="currentColor" />
-                <span className="font-bold text-white">{product.rating}</span>
-                <span className="text-slate-400">({product.reviews} reviews)</span>
+                <span className="font-bold text-white">4.8</span>
+                <span className="text-slate-400">(123 reviews)</span>
               </div>
             </div>
             
@@ -87,13 +94,6 @@ export const ProductDetailPage: React.FC = () => {
                 </div>
               </div>
               <button className="rent-button">Rent Now</button>
-              <div className="lender-info">
-                <img src={product.lender.avatarUrl} alt={product.lender.name} className="lender-avatar" />
-                <div>
-                  <p className="lender-name">Lent by {product.lender.name}</p>
-                  <p className="lender-rating">Lender Rating: {product.lender.rating} ★</p>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -102,7 +102,7 @@ export const ProductDetailPage: React.FC = () => {
         <section className="related-products-section">
             <h2 className="section-title" style={{textAlign: 'left', marginBottom: '1.5rem'}}>You might also like</h2>
             <div className="product-grid">
-                {relatedProducts.map(p => <ProductCard key={p.id} product={p} />)}
+                {related.map(p => <ProductCard key={p.id} product={p as any} />)}
             </div>
         </section>
       </div>

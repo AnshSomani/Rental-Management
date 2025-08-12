@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingBag, LayoutDashboard, History, Heart, User, LogOut, Search } from 'lucide-react';
 import '../styles/Dashboard.css'; // Reusing the same layout CSS
+import { useAuth } from '../context/AuthContext';
 
 // --- Reusable Customer Sidebar Component ---
 // In a real app, this would be a shared component
@@ -40,13 +41,18 @@ const CustomerSidebar: React.FC = () => (
 
 // --- Main MyRentalsPage Component ---
 export const MyRentalsPage: React.FC = () => {
-  // Placeholder data for all rentals
-  const allRentals = [
-    { id: 1, name: 'Mountain Bike', startDate: 'Aug 11, 2025', endDate: 'Aug 12, 2025', total: 75.00, status: 'Active', imageUrl: 'https://placehold.co/100x100/1e293b/94a3b8?text=Bike' },
-    { id: 2, name: 'Pro Camera Lens', startDate: 'Aug 10, 2025', endDate: 'Aug 15, 2025', total: 45.00, status: 'Completed', imageUrl: 'https://placehold.co/100x100/1e293b/94a3b8?text=Lens' },
-    { id: 3, name: 'Camping Tent', startDate: 'Jul 20, 2025', endDate: 'Jul 22, 2025', total: 70.00, status: 'Completed', imageUrl: 'https://placehold.co/100x100/1e293b/94a3b8?text=Tent' },
-    { id: 4, name: 'Party Speaker', startDate: 'Jun 05, 2025', endDate: 'Jun 06, 2025', total: 40.00, status: 'Completed', imageUrl: 'https://placehold.co/100x100/1e293b/94a3b8?text=Speaker' },
-  ];
+  const { api } = useAuth();
+  const [rentals, setRentals] = useState<any[]>([]);
+
+  useEffect(() => {
+    const load = async () => {
+      const { data } = await api.get('/rentals/mine');
+      setRentals(data);
+    };
+    load();
+  }, [api]);
+
+  const fmt = (date: string) => new Date(date).toLocaleDateString();
 
   return (
     <div className="dashboard-layout">
@@ -73,17 +79,17 @@ export const MyRentalsPage: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {allRentals.map(rental => (
+              {rentals.map(rental => (
                 <tr key={rental.id}>
                   <td style={{display: 'flex', alignItems: 'center', gap: '1rem'}}>
-                    <img src={rental.imageUrl} alt={rental.name} style={{width: '50px', height: '50px', borderRadius: '0.25rem'}}/>
-                    <span>{rental.name}</span>
+                    <img src={rental.product?.imageUrl || 'https://placehold.co/50x50/1e293b/94a3b8?text=Img'} alt={rental.product?.name} style={{width: '50px', height: '50px', borderRadius: '0.25rem'}}/>
+                    <span>{rental.product?.name}</span>
                   </td>
-                  <td>{rental.startDate}</td>
-                  <td>{rental.endDate}</td>
-                  <td>${rental.total.toFixed(2)}</td>
+                  <td>{fmt(rental.startDate)}</td>
+                  <td>{fmt(rental.endDate)}</td>
+                  <td>${Number(rental.totalPrice).toFixed(2)}</td>
                   <td>
-                    <span className={`status-badge ${rental.status === 'Active' ? 'status-active' : 'status-completed'}`}>
+                    <span className={`status-badge ${rental.status === 'active' ? 'status-active' : 'status-completed'}`}>
                       {rental.status}
                     </span>
                   </td>

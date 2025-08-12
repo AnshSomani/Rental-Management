@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { ShoppingBag, User, Briefcase } from 'lucide-react';
 import '../styles/Auth.css';
+import { useAuth } from '../context/AuthContext';
 
 export const LoginPage: React.FC = () => {
   const [role, setRole] = useState<'customer' | 'lender'>('customer');
@@ -12,6 +12,7 @@ export const LoginPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+  const { login, api } = useAuth();
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -19,25 +20,11 @@ export const LoginPage: React.FC = () => {
     setError('');
 
     try {
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      };
+      const { data } = await api.post('/auth/login', { email, password, role });
 
-      // API call to the backend login endpoint
-      const { data } = await axios.post(
-        'http://localhost:5001/api/auth/login',
-        { email, password, role }, // We send email, password, and the selected role
-        config
-      );
-
-      console.log('Login successful:', data);
-      // TODO: Save user data/token to context or local storage
-      
+      login(data);
       setLoading(false);
 
-      // Redirect based on the user's role
       if (data.role === 'lender') {
         navigate('/lender/dashboard');
       } else {

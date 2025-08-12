@@ -3,6 +3,8 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import authRoutes from './routes/authRoutes';
+import productRoutes from './routes/productRoutes';
+import rentalRoutes from './routes/rentalRoutes';
 
 // Load environment variables
 dotenv.config();
@@ -32,6 +34,8 @@ app.use(express.urlencoded({ extended: true })); // To parse URL-encoded bodies
 // --- API Routes ---
 app.get('/api', (req, res) => res.send('API is running...'));
 app.use('/api/auth', authRoutes); // Use the authentication routes
+app.use('/api/products', productRoutes);
+app.use('/api/rentals', rentalRoutes);
 
 
 // --- Error Handling Middlewares ---
