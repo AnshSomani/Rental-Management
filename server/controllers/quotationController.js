@@ -12,8 +12,8 @@ const addQuotationItems = async (req, res) => {
             return res.status(400).json({ message: 'No quotation products' });
         }
 
-        if (!deliveryMethod || !rentalPeriod?.from || !rentalPeriod?.to || !invoiceAddress) {
-            return res.status(400).json({ message: 'Missing required fields' });
+        if (!rentalPeriod?.from || !rentalPeriod?.to) {
+            return res.status(400).json({ message: 'Missing rental period' });
         }
 
         const firstProduct = await Product.findById(products[0].product);
@@ -22,17 +22,22 @@ const addQuotationItems = async (req, res) => {
         }
         const lender = firstProduct.lender;
 
+        const computedSubtotal = products.reduce((sum, it) => sum + (it.price || 0) * (it.quantity || 0), 0);
+        const computedTax = typeof tax === 'number' ? tax : Math.round(computedSubtotal * 0.05);
+        const computedDelivery = typeof deliveryCharge === 'number' ? deliveryCharge : 0;
+        const computedTotal = typeof finalAmount === 'number' ? finalAmount : computedSubtotal + computedTax + computedDelivery;
+
         const quotation = new Quotation({
             customer: req.user._id,
             lender,
             products,
-            total: finalAmount ?? totalPrice,
-            deliveryCharge: deliveryCharge || 0,
-            deliveryMethod,
+            total: computedTotal,
+            deliveryCharge: computedDelivery,
+            deliveryMethod: deliveryMethod || 'pickup',
             rentalPeriod,
             deliveryAddress,
-            invoiceAddress,
-            pickupAddress,
+            invoiceAddress: invoiceAddress || '',
+            pickupAddress: pickupAddress || firstProduct.pickupAddress || '',
             status: 'Pending',
         });
 

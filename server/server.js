@@ -8,6 +8,7 @@ import userRoutes from './routes/userRoutes.js';
 import productRoutes from './routes/productRoutes.js';
 import quotationRoutes from './routes/quotationRoutes.js';
 import contactRoutes from './routes/contactRoutes.js';
+import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 
 // Load environment variables from .env file
 dotenv.config();
@@ -37,6 +38,9 @@ app.use('/api/products', productRoutes);
 app.use('/api/quotations', quotationRoutes);
 app.use('/api/contact', contactRoutes);
 
+// Error handlers
+app.use(notFound);
+app.use(errorHandler);
 
 // --- Server Initialization ---
 const PORT = process.env.PORT || 5002;
