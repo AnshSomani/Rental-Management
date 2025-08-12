@@ -47,8 +47,9 @@ export const AppProvider = ({ children }) => {
     // User login
     const login = async (email, password, role) => {
         try {
+            const payload = role ? { email, password, role } : { email, password };
             const config = { headers: { 'Content-Type': 'application/json' } };
-            const { data } = await axios.post('/api/users/login', { email, password, role }, config);
+            const { data } = await axios.post('/api/users/login', payload, config);
             setUser(data);
             setAxiosAuthHeader(data.token);
             localStorage.setItem('userInfo', JSON.stringify(data));

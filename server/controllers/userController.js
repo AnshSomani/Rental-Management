@@ -7,9 +7,9 @@ import generateToken from '../utils/generateToken.js';
  * @access  Public
  */
 const authUser = async (req, res) => {
-    const { email, password, role } = req.body;
+    const { email, password } = req.body;
 
-    const user = await User.findOne({ email, role });
+    const user = await User.findOne({ email });
 
     if (user && (await user.matchPassword(password))) {
         res.json({
@@ -21,7 +21,7 @@ const authUser = async (req, res) => {
         });
     } else {
         res.status(401);
-        throw new Error('Invalid email, password, or role');
+        throw new Error('Invalid email or password');
     }
 };
 
