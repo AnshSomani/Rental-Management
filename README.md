@@ -7,8 +7,9 @@
 ## 👥 Team Information
 - **Team Name:** Hexica  
 - **Team Number:** 271  
-- **Live Website:** [https://rentalapp-szo5.onrender.com](https://rentalapp-szo5.onrender.com)  
-- **Demo Video:** [Watch Here](https://drive.google.com/file/d/1RpPwc7CMNSixq5kNpv3_TUlG950gl3DR/view?usp=sharing)  
+---
+## Live Website: [https://rentalapp-szo5.onrender.com](https://rentalapp-szo5.onrender.com)  
+## Demo Video: [Watch Here](https://drive.google.com/file/d/1RpPwc7CMNSixq5kNpv3_TUlG950gl3DR/view?usp=sharing)  
 
 ---
 
