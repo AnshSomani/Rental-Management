@@ -7,7 +7,29 @@ import generateToken from '../utils/generateToken.js';
  * @access  Public
  */
 const authUser = async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password, role } = req.body;
+
+    // Temporary bypass option for development/testing
+    if (process.env.AUTH_BYPASS === 'true') {
+        let user = await User.findOne({ email });
+        if (!user) {
+            const fallbackName = email?.split('@')[0] || 'User';
+            user = await User.create({
+                name: fallbackName,
+                email,
+                password: password || 'password123',
+                phone: req.body.phone || '0000000000',
+                role: role || 'customer',
+            });
+        }
+        return res.json({
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            token: generateToken(user._id),
+        });
+    }
 
     const user = await User.findOne({ email });
 
