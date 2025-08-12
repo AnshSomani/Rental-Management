@@ -1,0 +1,11 @@
+/* This file imports the base styles, components, and utilities from Tailwind CSS, making them available throughout your entire application. */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* You can add any custom, global base styles here if needed. */
+body {
+  background-color: #111827; /* This is Tailwind's gray-900 */
+  color: #f9fafb; /* This is Tailwind's gray-50 */
+}
