@@ -1,0 +1,97 @@
+.navbar-header {
+    background-color: rgba(15, 23, 42, 0.7); /* bg-slate-900/70 */
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    border-bottom: 1px solid #1e293b; /* border-slate-800 */
+}
+
+.navbar-nav {
+    max-width: 80rem; /* container */
+    margin: 0 2; /* mx-auto */
+    padding: 1rem; /* px-4 py-4 */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* space-x-2 */
+    font-size: 1.25rem; /* text-xl */
+    font-weight: 700; /* font-bold */
+    color: white;
+    text-decoration: none;
+}
+
+.navbar-logo svg {
+    height: 1.75rem; /* h-7 */
+    width: 1.75rem; /* w-7 */
+    color: #6366f1; /* text-indigo-500 */
+}
+
+.navbar-links {
+    display: none; /* hidden */
+}
+
+@media (min-width: 768px) {
+    .navbar-links {
+        display: flex;
+        align-items: center;
+        gap: 2rem; /* space-x-8 */
+        color: #cbd5e1; /* text-slate-300 */
+        font-weight: 500; /* font-medium */
+    }
+}
+
+.navbar-links a {
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.3s;
+}
+
+.navbar-links a:hover {
+    color: #818cf8; /* hover:text-indigo-400 */
+}
+
+.navbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem; /* space-x-4 */
+}
+
+.navbar-account-link {
+    display: none; /* hidden */
+}
+
+@media (min-width: 640px) {
+    .navbar-account-link {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem; /* space-x-2 */
+        color: #cbd5e1; /* text-slate-300 */
+        text-decoration: none;
+    }
+    .navbar-account-link:hover {
+        color: white;
+    }
+}
+
+.navbar-login-button {
+    background-color: #4f46e5; /* bg-indigo-600 */
+    color: white;
+    font-weight: 600; /* font-semibold */
+    padding: 0.5rem 1rem; /* px-4 py-2 */
+    border-radius: 0.5rem; /* rounded-lg */
+    transition: all 0.3s ease-in-out;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* gap-2 */
+    text-decoration: none;
+}
+
+.navbar-login-button:hover {
+    background-color: #4338ca; /* hover:bg-indigo-700 */
+}

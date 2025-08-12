@@ -1,0 +1,91 @@
+/* This page reuses a lot of styles from Dashboard.css */
+/* We only need to add styles for new, specific elements */
+
+.product-list-table-img {
+    width: 60px;
+    height: 60px;
+    border-radius: 0.5rem; /* rounded-lg */
+    object-fit: cover;
+}
+
+.product-list-item-name {
+    font-weight: 600;
+    color: white;
+}
+
+.product-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    text-decoration: none;
+    font-size: 0.875rem;
+    border: none;
+    cursor: pointer;
+}
+
+.edit-btn {
+    background-color: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+}
+
+.delete-btn {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+/* Availability Toggle Switch */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #334155; /* bg-slate-700 */
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .toggle-slider {
+    background-color: #16a34a; /* bg-green-600 */
+}
+
+input:focus + .toggle-slider {
+    box-shadow: 0 0 1px #16a34a;
+}
+
+input:checked + .toggle-slider:before {
+    transform: translateX(20px);
+}

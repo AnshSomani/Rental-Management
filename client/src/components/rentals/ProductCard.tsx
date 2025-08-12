@@ -1,10 +1,13 @@
 import React from 'react';
-import { ShoppingCart, Heart, Box } from 'lucide-react';
+import { Star } from 'lucide-react';
+import './ProductCard.css'; // Import the new CSS file
 
 interface Product {
   id: number;
   name: string;
   price: number;
+  category: string;
+  imageUrl: string;
 }
 
 interface ProductCardProps {
@@ -13,21 +16,35 @@ interface ProductCardProps {
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   return (
-    <div className="border border-gray-700 bg-gray-800 rounded-lg p-4 flex flex-col justify-between hover:border-indigo-500 transition-all duration-300 transform hover:-translate-y-1">
-      <div className="flex-grow">
-        <div className="bg-gray-700 aspect-square rounded-md flex items-center justify-center mb-4">
-          <Box className="h-16 w-16 text-gray-500" />
+    <div className="product-card">
+      <div className="product-card-image-container">
+        <img
+          src={product.imageUrl}
+          alt={product.name}
+          className="product-card-image"
+          onError={(e) => { e.currentTarget.src = 'https://placehold.co/400x400/1e293b/94a3b8?text=Image+Error'; }}
+        />
+        <div className="product-card-category">
+          {product.category}
         </div>
-        <h3 className="font-semibold mb-1">{product.name}</h3>
-        <p className="text-indigo-400 font-bold mb-4">${product.price.toFixed(2)}</p>
       </div>
-      <div className="flex items-center justify-between text-sm">
-        <button className="flex items-center space-x-2 px-3 py-1.5 bg-indigo-600 rounded-md hover:bg-indigo-700 transition-colors">
-          <ShoppingCart className="h-4 w-4" />
-          <span>Add to Cart</span>
-        </button>
-        <button className="p-2 rounded-full hover:bg-gray-700 transition-colors">
-          <Heart className="h-5 w-5 text-gray-400" />
+      <div className="product-card-content">
+        <h3 className="product-card-title">{product.name}</h3>
+        <div className="product-card-details">
+            <div>
+                <p className="product-card-price-label">Starting from</p>
+                <p className="product-card-price">
+                    ${product.price.toFixed(2)}
+                    <span className="product-card-price-unit">/day</span>
+                </p>
+            </div>
+            <div className="product-card-rating">
+                <Star className="product-card-star-icon" />
+                <span className="product-card-rating-text">4.8</span>
+            </div>
+        </div>
+        <button className="product-card-button">
+          Rent Now
         </button>
       </div>
     </div>

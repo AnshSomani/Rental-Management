@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rental Shop - Standalone</title>
+    <!-- This script loads Tailwind CSS directly in the browser, bypassing the local build process -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Font for better typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Apply the Inter font to the whole page */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+
+    <!-- Navbar Component -->
+    <header class="bg-gray-800/50 backdrop-blur-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <a href="#" class="flex items-center space-x-2 text-xl font-bold">
+                    <!-- ShoppingBag Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-400"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                    <span>Rental Shop</span>
+                </a>
+                <div class="hidden md:flex items-center space-x-2 bg-gray-700/50 p-1 rounded-lg">
+                    <a href="#" class="flex items-center px-3 py-1 bg-gray-600 rounded-md">Home</a>
+                    <a href="#" class="flex items-center px-3 py-1 hover:bg-gray-600 rounded-md">Rental Shop</a>
+                    <a href="#" class="flex items-center px-3 py-1 hover:bg-gray-600 rounded-md">Wishlist</a>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="hidden md:flex items-center space-x-2 bg-gray-700/50 p-1 rounded-lg">
+                    <a href="#" class="flex items-center px-3 py-1 hover:bg-gray-600 rounded-md">adam</a>
+                    <a href="#" class="flex items-center px-3 py-1 hover:bg-gray-600 rounded-md">Contact us</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Category Filters -->
+        <div class="flex items-center justify-center space-x-2 md:space-x-4 mb-8 flex-wrap">
+            <button class="px-4 py-2 my-1 border border-gray-600 rounded-lg hover:bg-gray-700 transition-colors text-sm">Category 1</button>
+            <button class="px-4 py-2 my-1 border border-gray-600 rounded-lg hover:bg-gray-700 transition-colors text-sm">Category 2</button>
+            <button class="px-4 py-2 my-1 border border-gray-600 rounded-lg hover:bg-gray-700 transition-colors text-sm">Category 3</button>
+            <button class="px-4 py-2 my-1 border border-gray-600 rounded-lg hover:bg-gray-700 transition-colors text-sm">Category 4</button>
+            <button class="px-4 py-2 my-1 border border-gray-600 rounded-lg hover:bg-gray-700 transition-colors text-sm">Category 5</button>
+        </div>
+
+        <div class="flex flex-col md:flex-row gap-8">
+            <!-- Sidebar -->
+            <aside class="w-full md:w-1/4">
+                <h2 class="text-xl font-semibold mb-4 flex items-center">Product attributes</h2>
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="font-semibold mb-2">Colors</h3>
+                        <ul class="space-y-1 text-gray-400">
+                            <li class="cursor-pointer hover:text-white">Red</li>
+                            <li class="cursor-pointer hover:text-white">Blue</li>
+                            <li class="cursor-pointer hover:text-white">Green</li>
+                            <li class="cursor-pointer hover:text-white">Black</li>
+                            <li class="cursor-pointer hover:text-white">White</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold mb-2">Price range</h3>
+                        <ul class="space-y-1 text-gray-400">
+                            <li class="cursor-pointer hover:text-white">Under $25</li>
+                            <li class="cursor-pointer hover:text-white">$25 to $50</li>
+                            <li class="cursor-pointer hover:text-white">$50 to $100</li>
+                            <li class="cursor-pointer hover:text-white">$100 to $200</li>
+                            <li class="cursor-pointer hover:text-white">Above $200</li>
+                        </ul>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content Area -->
+            <div class="w-full md:w-3/4">
+                <!-- Search and Sort Bar -->
+                <div class="flex flex-col md:flex-row items-center justify-between mb-6 bg-gray-800 p-3 rounded-lg">
+                    <div class="relative w-full md:w-1/2 mb-2 md:mb-0 md:mx-4">
+                        <input type="text" placeholder="Search..." class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <select class="bg-transparent border border-gray-600 rounded-lg pl-3 pr-8 py-2 appearance-none focus:outline-none">
+                            <option class="bg-gray-800">Sort by</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Product Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <!-- Product Card Component -->
+                    <div class="border border-gray-700 bg-gray-800 rounded-lg p-4 flex flex-col justify-between hover:border-indigo-500 transition-all duration-300 transform hover:-translate-y-1">
+                        <div class="flex-grow">
+                            <div class="bg-gray-700 aspect-square rounded-md flex items-center justify-center mb-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" x2="12" y1="22.08" y2="12"/></svg>
+                            </div>
+                            <h3 class="font-semibold mb-1">Product Name</h3>
+                            <p class="text-indigo-400 font-bold mb-4">$20.00</p>
+                        </div>
+                        <div class="flex items-center justify-between text-sm">
+                            <button class="flex items-center space-x-2 px-3 py-1.5 bg-indigo-600 rounded-md hover:bg-indigo-700 transition-colors">
+                                <span>Add to Cart</span>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Repeat Product Card for demo -->
+                    <div class="border border-gray-700 bg-gray-800 rounded-lg p-4 flex flex-col justify-between hover:border-indigo-500 transition-all duration-300 transform hover:-translate-y-1"><div class="flex-grow"><div class="bg-gray-700 aspect-square rounded-md flex items-center justify-center mb-4"><svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" x2="12" y1="22.08" y2="12"/></svg></div><h3 class="font-semibold mb-1">Product Name</h3><p class="text-indigo-400 font-bold mb-4">$20.00</p></div><div class="flex items-center justify-between text-sm"><button class="flex items-center space-x-2 px-3 py-1.5 bg-indigo-600 rounded-md hover:bg-indigo-700 transition-colors"><span>Add to Cart</span></button></div></div>
+                    <div class="border border-gray-700 bg-gray-800 rounded-lg p-4 flex flex-col justify-between hover:border-indigo-500 transition-all duration-300 transform hover:-translate-y-1"><div class="flex-grow"><div class="bg-gray-700 aspect-square rounded-md flex items-center justify-center mb-4"><svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" x2="12" y1="22.08" y2="12"/></svg></div><h3 class="font-semibold mb-1">Product Name</h3><p class="text-indigo-400 font-bold mb-4">$20.00</p></div><div class="flex items-center justify-between text-sm"><button class="flex items-center space-x-2 px-3 py-1.5 bg-indigo-600 rounded-md hover:bg-indigo-700 transition-colors"><span>Add to Cart</span></button></div></div>
+                    <div class="border border-gray-700 bg-gray-800 rounded-lg p-4 flex flex-col justify-between hover:border-indigo-500 transition-all duration-300 transform hover:-translate-y-1"><div class="flex-grow"><div class="bg-gray-700 aspect-square rounded-md flex items-center justify-center mb-4"><svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" x2="12" y1="22.08" y2="12"/></svg></div><h3 class="font-semibold mb-1">Product Name</h3><p class="text-indigo-400 font-bold mb-4">$20.00</p></div><div class="flex items-center justify-between text-sm"><button class="flex items-center space-x-2 px-3 py-1.5 bg-indigo-600 rounded-md hover:bg-indigo-700 transition-colors"><span>Add to Cart</span></button></div></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

@@ -1,4 +1,19 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-  
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+/* Add this to your index.css file */
+
+/* Add this to the top of your index.css */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* You can keep your other body styles below */
+body {
+  background-color: #0f172a;
+  font-family: sans-serif;
+}

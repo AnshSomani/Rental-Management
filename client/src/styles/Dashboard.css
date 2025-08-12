@@ -1,0 +1,179 @@
+.dashboard-layout {
+    display: flex;
+    min-height: 100vh;
+    background-color: #0f172a; /* bg-slate-900 */
+    color: #cbd5e1; /* text-slate-300 */
+    font-family: sans-serif;
+}
+
+.dashboard-sidebar {
+    width: 280px;
+    background-color: #1e293b; /* bg-slate-800 */
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #334155; /* border-slate-700 */
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 2rem;
+    text-decoration: none;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex-grow: 1;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    color: #cbd5e1; /* text-slate-300 */
+    transition: all 0.2s;
+}
+
+.sidebar-link:hover {
+    background-color: #334155; /* hover:bg-slate-700 */
+    color: white;
+}
+
+.sidebar-link.active {
+    background-color: #4f46e5; /* bg-indigo-600 */
+    color: white;
+}
+
+.sidebar-footer {
+    border-top: 1px solid #334155;
+    padding-top: 1rem;
+}
+
+.dashboard-main-content {
+    flex-grow: 1;
+    padding: 2rem;
+    overflow-y: auto;
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.dashboard-title {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: white;
+}
+
+.add-product-button {
+    background-color: #4f46e5;
+    color: white;
+    font-weight: 600;
+    padding: 0.625rem 1.25rem;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background-color 0.3s;
+}
+.add-product-button:hover {
+    background-color: #4338ca;
+}
+
+/* Stats Cards */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background-color: #1e293b;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid #334155;
+}
+
+.stat-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.stat-card-title {
+    font-weight: 500;
+    color: #94a3b8;
+}
+
+.stat-card-value {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: white;
+}
+
+/* Activity Table */
+.activity-table-container {
+    background-color: #1e293b;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    border: 1px solid #334155;
+}
+
+.activity-table-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 1rem;
+}
+
+.activity-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.activity-table th, .activity-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #334155;
+}
+
+.activity-table th {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: #94a3b8;
+}
+
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.status-completed {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+.status-active {
+    background-color: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+}

@@ -1,0 +1,80 @@
+.add-product-form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+@media (min-width: 1024px) {
+    .add-product-form-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #94a3b8;
+    margin-bottom: 0.5rem;
+}
+
+.form-input,
+.form-textarea,
+.form-select {
+    width: 100%;
+    background-color: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    color: white;
+    box-sizing: border-box;
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #4f46e5;
+}
+
+.form-textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.image-upload-zone {
+    border: 2px dashed #334155;
+    border-radius: 0.5rem;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.image-upload-zone:hover {
+    border-color: #4f46e5;
+}
+
+.image-upload-zone svg {
+    margin: 0 auto 1rem auto;
+    color: #4f46e5;
+}
+
+.image-upload-text {
+    font-weight: 600;
+    color: white;
+}
+
+.image-upload-hint {
+    font-size: 0.875rem;
+    color: #94a3b8;
+}
+
+/* Hide default file input */
+.hidden-file-input {
+    display: none;
+}

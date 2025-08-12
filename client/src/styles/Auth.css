@@ -1,0 +1,158 @@
+.auth-container {
+    display: flex;
+    min-height: 100vh;
+    background-color: #0f172a;
+    color: #cbd5e1;
+    font-family: sans-serif;
+}
+
+.auth-panel {
+    width: 50%;
+    /* height: 100vh; <-- REMOVED THIS LINE */
+    display: none; /* Hidden on small screens */
+    background-color: #1e293b;
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* This vertically centers the text inside */
+    box-sizing: border-box;
+}
+
+@media (min-width: 1024px) {
+    .auth-panel {
+        display: flex;
+    }
+}
+
+.auth-panel-title {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 1rem;
+}
+
+.auth-panel-subtitle {
+    font-size: 1.125rem;
+    color: #94a3b8;
+    max-width: 28rem;
+}
+
+.auth-form-container {
+    width: 100%;
+    /* height: 100vh; <-- REMOVED THIS LINE */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* This vertically centers the form inside */
+    align-items: center;
+    padding: 2rem;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+@media (min-width: 1024px) {
+    .auth-form-container {
+        width: 50%;
+    }
+}
+
+.auth-form {
+    width: 100%;
+    max-width: 24rem;
+}
+
+.auth-title {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: white;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.input-group {
+    margin-bottom: 1.5rem;
+}
+
+.input-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #94a3b8;
+    margin-bottom: 0.5rem;
+}
+
+.auth-input {
+    width: 100%;
+    background-color: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    color: white;
+    box-sizing: border-box;
+}
+
+.auth-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #4f46e5;
+}
+
+.auth-button {
+    width: 100%;
+    background-color: #4f46e5;
+    color: white;
+    font-weight: 600;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.auth-button:hover {
+    background-color: #4338ca;
+}
+
+.auth-link {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 0.875rem;
+    color: #94a3b8;
+}
+
+.auth-link a {
+    color: #818cf8;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.auth-link a:hover {
+    text-decoration: underline;
+}
+
+/* Role Selector for Login Page */
+.role-selector {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.role-option {
+    width: 50%;
+    padding: 1rem;
+    border: 1px solid #334155;
+    border-radius: 0.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.role-option.selected {
+    background-color: #3730a3;
+    border-color: #4f46e5;
+    color: white;
+}
+
+.role-option svg {
+    margin: 0 auto 0.5rem auto;
+    height: 1.5rem;
+    width: 1.5rem;
+}
